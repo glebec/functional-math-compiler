@@ -2,13 +2,13 @@ Expression = Term, A;
 
 A = '+', Term, A
   | '-', Term, A
-  | epsilon;
+  | '';
 
 Term = Factor, B;
 
 B = '*', Factor, B
   | '/', Factor, B
-  | epsilon;
+  | '';
 
 Factor = '(', Expression, ')'
        | '-', Factor
@@ -17,5 +17,3 @@ Factor = '(', Expression, ')'
 Integer = ['-'], Natural;
 Natural = { Digit };
 Digit = '0' | '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9';
-
-epsilon = '';
