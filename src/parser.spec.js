@@ -1,4 +1,5 @@
 'use strict'; // eslint-disable-line semi
+/* eslint-disable no-unused-expressions */
 
 const { List } = require('immutable')
 const { expect } = require('chai')
@@ -48,7 +49,6 @@ describe('parsing functions:', () => {
 			const value = parseInteger(tokens)
 			expect(value).to.be.an('object')
 			expect(value.PT).to.be.an('object')
-			// eslint-disable-next-line no-unused-expressions
 			expect(List.isList(value.tokens)).to.be.true
 			expect(value.PT.value).to.equal(487)
 			expect(value.tokens).to.equal(List.of(null))
@@ -59,7 +59,6 @@ describe('parsing functions:', () => {
 			const value = parseInteger(tokens)
 			expect(value).to.be.an('object')
 			expect(value.PT).to.be.an('object')
-			// eslint-disable-next-line no-unused-expressions
 			expect(List.isList(value.tokens)).to.be.true
 			expect(value.PT.value).to.equal(-487)
 			expect(value.tokens).to.equal(List.of(null))
@@ -84,7 +83,6 @@ describe('parsing functions:', () => {
 			const value = parseFactor(tokens)
 			expect(value).to.be.an('object')
 			expect(value.PT).to.be.an('object')
-			// eslint-disable-next-line no-unused-expressions
 			expect(List.isList(value.tokens)).to.be.true
 			expect(value.PT.value).to.equal(487)
 			expect(value.tokens).to.equal(List.of(null))
@@ -95,7 +93,6 @@ describe('parsing functions:', () => {
 			const value = parseFactor(tokens)
 			expect(value).to.be.an('object')
 			expect(value.PT).to.be.an('object')
-			// eslint-disable-next-line no-unused-expressions
 			expect(List.isList(value.tokens)).to.be.true
 			expect(value.PT.value).to.equal(-487)
 			expect(value.tokens).to.equal(List.of(null))
@@ -125,9 +122,7 @@ describe('parsing functions:', () => {
 		it('converts irrelevant token to null PT & remaining tokens', () => {
 			const value = parseF2(tokens)
 			expect(value).to.be.an('object')
-			// eslint-disable-next-line no-unused-expressions
 			expect(value.PT).to.be.null
-			// eslint-disable-next-line no-unused-expressions
 			expect(List.isList(value.tokens)).to.be.true
 			expect(value.tokens).to.deep.equal(tokens)
 		})
@@ -137,12 +132,9 @@ describe('parsing functions:', () => {
 			const value = parseF2(tokens)
 			expect(value).to.be.an('object')
 			expect(value.PT).to.be.an('object')
-			// eslint-disable-next-line no-unused-expressions
 			expect(Token.Mul.is(value.PT.op)).to.be.true
 			expect(value.PT.factor).to.be.an('object')
-			// eslint-disable-next-line no-unused-expressions
 			expect(value.PT.childF2).to.be.null
-			// eslint-disable-next-line no-unused-expressions
 			expect(List.isList(value.tokens)).to.be.true
 			expect(value.tokens).to.equal(List.of(null))
 		})
@@ -152,11 +144,9 @@ describe('parsing functions:', () => {
 			const value = parseF2(tokens)
 			expect(value).to.be.an('object')
 			expect(value.PT).to.be.an('object')
-			// eslint-disable-next-line no-unused-expressions
 			expect(Token.Div.is(value.PT.op)).to.be.true
 			expect(value.PT.factor).to.be.an('object')
 			expect(value.PT.childF2).to.be.an('object')
-			// eslint-disable-next-line no-unused-expressions
 			expect(List.isList(value.tokens)).to.be.true
 			expect(value.tokens).to.equal(List.of(null))
 		})

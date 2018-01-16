@@ -1,4 +1,5 @@
 'use strict'; // eslint-disable-line semi
+/* eslint-disable no-unused-expressions */
 
 const { List } = require('immutable')
 const chai = require('chai')
@@ -34,18 +35,15 @@ describe('Token', () => {
 
 		it('can be confirmed as a `Number`', () => {
 			const num = Token.Number(Math.random())
-			// eslint-disable-next-line no-unused-expressions
 			expect(Token.Number.is(num)).to.be.true
 		})
 
 		it('can be confirmed as a `Token`', () => {
 			const num = Token.Number(Math.random())
-			// eslint-disable-next-line no-unused-expressions
 			expect(Token.is(num)).to.be.true
 		})
 
 		it('does not confirm non-`Number`s', () => {
-			// eslint-disable-next-line no-unused-expressions
 			expect(Token.Number.is({})).to.be.false
 		})
 
@@ -76,17 +74,14 @@ describe('Token', () => {
 				})
 
 				it(`can be confirmed as a ${typeName}`, () => {
-					// eslint-disable-next-line no-unused-expressions
 					expect(Token[typeName].is(type)).to.be.true
 				})
 
 				it('can be confirmed as a `Token`', () => {
-					// eslint-disable-next-line no-unused-expressions
 					expect(Token.is(type)).to.be.true
 				})
 
 				it(`does not confirm non-${typeName}s`, () => {
-					// eslint-disable-next-line no-unused-expressions
 					expect(Token.Number.is({})).to.be.false
 				})
 
