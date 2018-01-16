@@ -1,5 +1,6 @@
 'use strict'; // eslint-disable-line semi
 
+const { List } = require('immutable')
 const { expect } = require('chai')
 const { Token, lex } = require('./lexer')
 const {
@@ -40,26 +41,28 @@ describe('parsing functions:', () => {
 
 		let tokens
 		beforeEach(() => {
-			tokens = [...lex('487'), null]
+			tokens = lex('487').push(null)
 		})
 
 		it('converts number token to number PT & remaining tokens', () => {
 			const value = parseInteger(tokens)
 			expect(value).to.be.an('object')
 			expect(value.PT).to.be.an('object')
-			expect(value.tokens).to.be.an('array')
+			// eslint-disable-next-line no-unused-expressions
+			expect(List.isList(value.tokens)).to.be.true
 			expect(value.PT.value).to.equal(487)
-			expect(value.tokens).to.deep.equal([null])
+			expect(value.tokens).to.equal(List.of(null))
 		})
 
 		it('converts sub token and number token to negative number PT & remaining tokens', () => {
-			tokens = [...lex('-487'), null]
+			tokens = lex('-487').push(null)
 			const value = parseInteger(tokens)
 			expect(value).to.be.an('object')
 			expect(value.PT).to.be.an('object')
-			expect(value.tokens).to.be.an('array')
+			// eslint-disable-next-line no-unused-expressions
+			expect(List.isList(value.tokens)).to.be.true
 			expect(value.PT.value).to.equal(-487)
-			expect(value.tokens).to.deep.equal([null])
+			expect(value.tokens).to.equal(List.of(null))
 		})
 
 		it('throws when given any other token', () => {
@@ -74,26 +77,28 @@ describe('parsing functions:', () => {
 
 		let tokens
 		beforeEach(() => {
-			tokens = [...lex('487'), null]
+			tokens = lex('487').push(null)
 		})
 
 		it('converts number token to number PT & remaining tokens', () => {
 			const value = parseFactor(tokens)
 			expect(value).to.be.an('object')
 			expect(value.PT).to.be.an('object')
-			expect(value.tokens).to.be.an('array')
+			// eslint-disable-next-line no-unused-expressions
+			expect(List.isList(value.tokens)).to.be.true
 			expect(value.PT.value).to.equal(487)
-			expect(value.tokens).to.deep.equal([null])
+			expect(value.tokens).to.equal(List.of(null))
 		})
 
 		it('converts sub token and number token to negative number PT & remaining tokens', () => {
-			tokens = [...lex('-487'), null]
+			tokens = lex('-487').push(null)
 			const value = parseFactor(tokens)
 			expect(value).to.be.an('object')
 			expect(value.PT).to.be.an('object')
-			expect(value.tokens).to.be.an('array')
+			// eslint-disable-next-line no-unused-expressions
+			expect(List.isList(value.tokens)).to.be.true
 			expect(value.PT.value).to.equal(-487)
-			expect(value.tokens).to.deep.equal([null])
+			expect(value.tokens).to.equal(List.of(null))
 		})
 
 		it('throws when given any other token', () => {
@@ -114,7 +119,7 @@ describe('parsing functions:', () => {
 
 		let tokens
 		beforeEach(() => {
-			tokens = [...lex('487'), null]
+			tokens = lex('487').push(null)
 		})
 
 		it('converts irrelevant token to null PT & remaining tokens', () => {
@@ -122,12 +127,13 @@ describe('parsing functions:', () => {
 			expect(value).to.be.an('object')
 			// eslint-disable-next-line no-unused-expressions
 			expect(value.PT).to.be.null
-			expect(value.tokens).to.be.an('array')
+			// eslint-disable-next-line no-unused-expressions
+			expect(List.isList(value.tokens)).to.be.true
 			expect(value.tokens).to.deep.equal(tokens)
 		})
 
 		it('converts mul token and number token to PT & remaining tokens', () => {
-			tokens = [...lex('*487'), null]
+			tokens = lex('*487').push(null)
 			const value = parseF2(tokens)
 			expect(value).to.be.an('object')
 			expect(value.PT).to.be.an('object')
@@ -136,12 +142,13 @@ describe('parsing functions:', () => {
 			expect(value.PT.factor).to.be.an('object')
 			// eslint-disable-next-line no-unused-expressions
 			expect(value.PT.childF2).to.be.null
-			expect(value.tokens).to.be.an('array')
-			expect(value.tokens).to.deep.equal([null])
+			// eslint-disable-next-line no-unused-expressions
+			expect(List.isList(value.tokens)).to.be.true
+			expect(value.tokens).to.equal(List.of(null))
 		})
 
 		it('works for recursive factors', () => {
-			tokens = [...lex('/ 54 * 91'), null]
+			tokens = lex('/ 54 * 91').push(null)
 			const value = parseF2(tokens)
 			expect(value).to.be.an('object')
 			expect(value.PT).to.be.an('object')
@@ -149,8 +156,9 @@ describe('parsing functions:', () => {
 			expect(Token.Div.is(value.PT.op)).to.be.true
 			expect(value.PT.factor).to.be.an('object')
 			expect(value.PT.childF2).to.be.an('object')
-			expect(value.tokens).to.be.an('array')
-			expect(value.tokens).to.deep.equal([null])
+			// eslint-disable-next-line no-unused-expressions
+			expect(List.isList(value.tokens)).to.be.true
+			expect(value.tokens).to.equal(List.of(null))
 		})
 
 		xit('deals...', () => {

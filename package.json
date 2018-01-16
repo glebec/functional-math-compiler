@@ -23,11 +23,13 @@
 	},
 	"bugs": "https://github.com/glebec/springboard/issues",
 	"dependencies": {
-		"daggy": "^1.2.0"
+		"daggy": "^1.2.0",
+		"immutable": "^3.8.2"
 	},
 	"devDependencies": {
 		"babel-eslint": "^7.2.3",
 		"chai": "^4.1.2",
+		"chai-immutable": "^1.6.0",
 		"eslint": "^3.19.0",
 		"eslint-config-fullstack": "^3.0.0",
 		"eslint-formatter-pretty": "^1.1.0",

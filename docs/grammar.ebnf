@@ -11,9 +11,8 @@ F2 = '*', Factor, F2
    | '';
 
 Factor = '(', Expression, ')'
-       | Integer;
-
-Integer = ['-'], Natural;
+       | '-', Factor
+       | Natural;
 
 Natural = { Digit };
 
