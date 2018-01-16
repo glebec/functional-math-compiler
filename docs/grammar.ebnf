@@ -2,19 +2,20 @@ Expression = Term, T2;
 
 T2 = '+', Term, T2
    | '-', Term, T2
-   | '';
+   | ''; (* aka epsilon *)
 
 Term = Factor, F2;
 
 F2 = '*', Factor, F2
    | '/', Factor, F2
-   | '';
+   | ''; (* aka epsilon *)
 
 Factor = '(', Expression, ')'
        | '-', Factor
        | Natural;
 
-Natural = { Digit };
+Natural = { Digit }; (* our compiler uses terminal Number tokens *)
 
+(* alternatively, we could use terminal single-char Digit tokens *)
 Digit = '0' | '1' | '2' | '3' | '4'
       | '5' | '6' | '7' | '8' | '9';

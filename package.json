@@ -5,13 +5,14 @@
 	"engines": {
 		"node": ">=8.0.0"
 	},
-	"main": "index.js",
+	"main": "src/index.js",
 	"scripts": {
 		"test": "mocha src/*.spec.js",
 		"test-watch": "npm run test -- --watch",
 		"prepush": "npm test",
 		"lint": "esw --ext .js,.jsx --ignore-path .gitignore --cache --format node_modules/eslint-formatter-pretty",
 		"lint-watch": "npm run lint -- --watch",
+		"start": "node src",
 		"dev": "echo \"Please add a dev script\""
 	},
 	"author": "Gabriel Lebec <glebec@gmail.com> (https://github.com/glebec)",

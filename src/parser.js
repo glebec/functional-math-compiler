@@ -4,76 +4,86 @@
 // a utility library for building Sum Types in JS
 const daggy = require('daggy')
 
+const { inspect } = require('util')
 const { Token, lex } = require('./lexer')
 
 const ParseTree = daggy.taggedSum('ParseTree', {
-	Integer: ['value'],
-	Factor: ['child'],
+	Natural: ['value'],
+	Factor: ['child', 'negate'],
 	F2: ['op', 'factor', 'childF2'],
 	T2: ['op', 'term', 'childT2'],
-	Term: ['factor', 'b'],
-	Expression: ['term', 'a'],
+	Term: ['factor', 'childF2'],
+	Expression: ['term', 'childT2'],
 })
 
-// Natural and Integer are actually evaluating, which strictly speaking means they are not creating parse tree nodes but rather AST nodes. We could be purists and do a true parse tree but it gets pretty extensive e.g. with individual `digit` nodes.
+// All the sub-parsers take a List of Tokens, and return a tuple of a parse
+// tree + the nodes which the parser did not consume.
 
-// parseNatural :: String -> Number
+// parseNatural :: List<Token> -> { PT, List<Token> }
 const parseNatural = tokens => tokens.first().cata({
-	Number: numStr => +numStr
-})
-
-// parseInteger :: List<Token> -> { PT, List<Token> }
-const parseInteger = tokens => {
-	// Int -> Nat | - Nat
-	const multiplier = tokens.first().cata({
-		Sub: () => -1,
-		Number: () => 1
+	// Natural (a terminal symbol)
+	Number: value => ({
+		PT: ParseTree.Natural(value), // build a tree node
+		tokens: tokens.rest() // and consume one token
 	})
-	const offset = multiplier < 0 ? 1 : 0
-	return {
-		PT: ParseTree.Integer(
-			multiplier * parseNatural(tokens.slice(offset))
-		),
-		tokens: tokens.slice(offset + 1),
-	}
-}
+})
 
 // parseFactor :: List<Token> -> { PT, List<Token> }
 const parseFactor = tokens => {
-	// F -> I
-	if (!Token.Lparen.is(tokens.first())) {
-		return parseInteger(tokens)
-	}
+
+	const next = tokens.first()
+
 	// F -> (E)
-	// eslint-disable-next-line no-use-before-define
-	const result = parseExpression(tokens.slice(1))
-	if (!Token.Rparen.is(result.tokens.first())) {
-		throw Error(
-			'Unexpected token: ' +
-			(result.tokens.first() && result.tokens.first().toString())
-		)
+	// F -> -F
+	// F -> Natural
+
+	const isNum = Token.Number.is(next)
+	const isExpr = Token.Lparen.is(next)
+	const isNeg = Token.Sub.is(next)
+	const parseNext = next.cata({ // determine which parser to use
+		// eslint-disable-next-line no-use-before-define
+		Lparen: () => parseExpression,
+		Number: () => parseNatural,
+		Sub: () => parseFactor,
+	})
+
+	// if not Number, skip initial Sub or Lparen
+	const result = parseNext(isNum ? tokens : tokens.rest())
+
+	// checking that parenthetical expressions end in Rparen
+	if (isExpr && !Token.Rparen.is(result.tokens.first())) {
+		throw Error(`Unexpected token: ${result.tokens.first()}`)
 	}
+
 	return {
-		PT: result.PT,
-		tokens: result.tokens.slice(1) // remove Rparen
+		PT: ParseTree.Factor(
+			result.PT,
+			isNeg
+		),
+		tokens: isExpr
+			? result.tokens.rest() // remove Rparen
+			: result.tokens
 	}
 }
 
 // parseB :: List<Token> -> { PT, List<Token> }
 const parseF2 = tokens => {
-	// B -> epsilon
-	if (
-		!Token.Mul.is(tokens.first()) &&
-		!Token.Div.is(tokens.first())
-	) {
+
+	const next = tokens.first()
+
+	// F2 -> epsilon
+	const isMul = Token.Mul.is(next)
+	const isDiv = Token.Div.is(next)
+	if (!isMul && !isDiv) {
 		return {
 			PT: null,
 			tokens
 		}
 	}
-	// B -> * F F2 | / F F2
-	const op = tokens.first()
-	const factorResult = parseFactor(tokens.slice(1))
+
+	// F2 -> * F F2 | / F F2
+	const op = next
+	const factorResult = parseFactor(tokens.rest())
 	const f2Result = parseF2(factorResult.tokens)
 	return {
 		PT: ParseTree.F2(
@@ -101,19 +111,22 @@ const parseTerm = tokens => {
 
 // parseA :: List<Token> -> { PT, List<Token> }
 const parseT2 = tokens => {
-	// A -> epsilon
-	if (
-		!Token.Add.is(tokens.first()) &&
-		!Token.Sub.is(tokens.first())
-	) {
+
+	const next = tokens.first()
+
+	// T2 -> epsilon
+	const isAdd = Token.Add.is(next)
+	const isSub = Token.Sub.is(next)
+	if (!isAdd && !isSub) {
 		return {
 			PT: null,
 			tokens
 		}
 	}
+
 	// T2 -> + T T2 | - T T2
-	const op = tokens.first()
-	const termResult = parseTerm(tokens.slice(1))
+	const op = next
+	const termResult = parseTerm(tokens.rest())
 	const t2Result = parseT2(termResult.tokens)
 	return {
 		PT: ParseTree.T2(
@@ -142,15 +155,20 @@ const parseExpression = tokens => {
 // parse :: List<Token> -> ParseTree
 const parse = tokens => parseExpression(tokens).PT
 
-console.dir(parseExpression(lex('4 + (3 / 2) * (1 - 77 + -3)')).PT, {
-	depth: null,
-	colors: true
-})
+const debugParseTree = expressionStr => {
+	console.log(inspect(
+		parse(lex(expressionStr)),
+		{ depth: null, colors: true, customInspect: true }
+	))
+}
+
+// debugParseTree('1')
+// debugParseTree('4 + (3 / 2) * (1 - 77 + -3)')
 
 module.exports = {
+	ParseTree,
 	parse,
 	parseNatural,
-	parseInteger,
 	parseFactor,
 	parseF2,
 	parseTerm,
