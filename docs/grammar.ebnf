@@ -1,19 +1,21 @@
-Expression = Term, A;
+Expression = Term, T2;
 
-A = '+', Term, A
-  | '-', Term, A
-  | '';
+T2 = '+', Term, T2
+   | '-', Term, T2
+   | '';
 
-Term = Factor, B;
+Term = Factor, F2;
 
-B = '*', Factor, B
-  | '/', Factor, B
-  | '';
+F2 = '*', Factor, F2
+   | '/', Factor, F2
+   | '';
 
 Factor = '(', Expression, ')'
-       | '-', Factor
        | Integer;
 
 Integer = ['-'], Natural;
+
 Natural = { Digit };
-Digit = '0' | '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9';
+
+Digit = '0' | '1' | '2' | '3' | '4'
+      | '5' | '6' | '7' | '8' | '9';

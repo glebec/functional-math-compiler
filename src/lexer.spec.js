@@ -21,10 +21,10 @@ describe('Token', () => {
 		})
 
 		it('stores its argument as `.value`', () => {
-			const number5 = Token.Number(5)
-			expect(number5.value).to.equal(5)
-			const number9 = Token.Number(9)
-			expect(number9.value).to.equal(9)
+			const number5 = Token.Number('5')
+			expect(number5.value).to.equal('5')
+			const number9 = Token.Number('9')
+			expect(number9.value).to.equal('9')
 		})
 
 		it('can be confirmed as a `Number`', () => {
