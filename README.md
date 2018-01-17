@@ -107,3 +107,4 @@ A formal EBNF notation of a similar grammar is included in the `docs` folder, wi
 ## Resources
 
 * [Stanford CS143 Notes on Parsing (PDF)](https://web.stanford.edu/class/archive/cs/cs143/cs143.1156/handouts/parsing.pdf)
+* [Online RPN <-> Infix Compiler / Evaluator](http://rpnevaluator.andreasandersen.dk/default.aspx) (useful for double-checking)
