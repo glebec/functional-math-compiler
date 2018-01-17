@@ -9,11 +9,13 @@ const { Token, lex } = require('./lexer')
 
 const ParseTree = daggy.taggedSum('ParseTree', {
 	Natural: ['value'],
-	Factor: ['child', 'negate'],
+	Factor: ['child', 'sign'],
 	F2: ['op', 'factor', 'childF2'],
 	T2: ['op', 'term', 'childT2'],
 	Term: ['factor', 'childF2'],
 	Expression: ['term', 'childT2'],
+	EpsilonF: [], // multiplicative identity
+	EpsilonT: [], // additive identity
 })
 
 // All the sub-parsers take a List of Tokens, and return a tuple of a parse
@@ -34,7 +36,7 @@ const parseFactor = tokens => {
 	const next = tokens.first()
 
 	// F -> (E)
-	// F -> -F
+	// F -> S F
 	// F -> Natural
 
 	const isNum = Token.Number.is(next)
@@ -59,6 +61,8 @@ const parseFactor = tokens => {
 		PT: ParseTree.Factor(
 			result.PT,
 			isNeg
+				? Token.Sub
+				: ParseTree.EpsilonF, // multiplicative identity
 		),
 		tokens: isExpr
 			? result.tokens.rest() // remove Rparen
@@ -76,7 +80,7 @@ const parseF2 = tokens => {
 	const isDiv = Token.Div.is(next)
 	if (!isMul && !isDiv) {
 		return {
-			PT: null,
+			PT: ParseTree.EpsilonF,
 			tokens
 		}
 	}
@@ -119,7 +123,7 @@ const parseT2 = tokens => {
 	const isSub = Token.Sub.is(next)
 	if (!isAdd && !isSub) {
 		return {
-			PT: null,
+			PT: ParseTree.EpsilonT,
 			tokens
 		}
 	}

@@ -15,9 +15,10 @@ Compiler exercise for education. Parsing infix arithmetic expressions via LL(1) 
 ## Use
 
 ```sh
-yarn
-yarn test # optional
-yarn start '5 + (1 + 2) / 3 * -((8 - -2) / 1)'
+yarn # installs
+yarn test # passes
+yarn start '-9 * 2 / -(3 + 7) + ((-4 * 1/2) - -21)' # outputs RPN string
+yarn start '-9 * 2 / -(3 + 7) + ((-4 * 1/2) - -21)' --eval # outputs num
 ```
 
 ### Supports

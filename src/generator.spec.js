@@ -6,6 +6,8 @@ const chaiImmutable = require('chai-immutable')
 const { expect } = chai
 chai.use(chaiImmutable)
 
+const { evaluate, rpn } = require('./generator')
+
 describe('generator', () => {
 
 })

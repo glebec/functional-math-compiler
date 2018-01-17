@@ -11,8 +11,11 @@ F2 = '*', Factor, F2
    | ''; (* aka epsilon *)
 
 Factor = '(', Expression, ')'
-       | '-', Factor
+       | Sign Factor
        | Natural;
+
+Sign = '-'
+     | ''; (* aka epsilon *)
 
 Natural = { Digit }; (* our compiler uses terminal Number tokens *)
 

@@ -19,67 +19,71 @@ const {
 	parseExpression,
 } = require('./parser')
 
-describe('parsing functions:', () => {
+describe('parser', () => {
 
-	describe('parseNatural', () => {
+	describe('token parsing functions:', () => {
 
-		it('converts number token to natural node', () => {
-			const { PT } = parseNatural(lex('342'))
-			expect(ParseTree.Natural.is(PT)).to.be.true
+		describe('parseNatural', () => {
+
+			it('converts number token to natural node', () => {
+				const { PT } = parseNatural(lex('342'))
+				expect(ParseTree.Natural.is(PT)).to.be.true
+			})
+
+			it('natural node captures number token value', () => {
+				const { PT } = parseNatural(lex('342'))
+				expect(PT).to.be.an('object')
+				expect(PT).to.have.property('value')
+				expect(PT.value).to.equal('342')
+			})
+
+			it('consumes one token and returns the remainder', () => {
+				const tokens = lex('342')
+				expect(tokens).to.have.size(1)
+				const { tokens: remainder } = parseNatural(tokens)
+				expect(List.isList(remainder)).to.be.true
+				expect(remainder).to.have.size(0)
+			})
+
+			it('throws when given an incorrect token', () => {
+				const badParse = () => parseNatural(lex('-'))
+				expect(badParse).to.throw()
+			})
+
 		})
 
-		it('natural node captures number token value', () => {
-			const { PT } = parseNatural(lex('342'))
-			expect(PT).to.be.an('object')
-			expect(PT).to.have.property('value')
-			expect(PT.value).to.equal('342')
+		xdescribe('parseFactor', () => {
+			// TODO
 		})
 
-		it('consumes one token and returns the remainder', () => {
-			const tokens = lex('342')
-			expect(tokens).to.have.size(1)
-			const { tokens: remainder } = parseNatural(tokens)
-			expect(List.isList(remainder)).to.be.true
-			expect(remainder).to.have.size(0)
+		xdescribe('parseF2', () => {
+			// todo
 		})
 
-		it('throws when given an incorrect token', () => {
-			const badParse = () => parseNatural(lex('-'))
-			expect(badParse).to.throw()
+		xdescribe('parseTerm', () => {
+			// todo
+		})
+
+		xdescribe('parseT2', () => {
+			// todo
+		})
+
+		xdescribe('parseExpression', () => {
+			// todo
 		})
 
 	})
 
-	xdescribe('parseFactor', () => {
-		// TODO
-	})
+	describe('parse', () => {
 
-	xdescribe('parseF2', () => {
-		// todo
-	})
+		it('is a function', () => {
+			expect(parse).to.be.a('function')
+		})
 
-	xdescribe('parseTerm', () => {
-		// todo
-	})
+		xit('builds a parse tree for a number', () => {
+			// todo
+		})
 
-	xdescribe('parseT2', () => {
-		// todo
-	})
-
-	xdescribe('parseExpression', () => {
-		// todo
-	})
-
-})
-
-describe('parse', () => {
-
-	it('is a function', () => {
-		expect(parse).to.be.a('function')
-	})
-
-	xit('builds a parse tree for a number', () => {
-		// todo
 	})
 
 })
