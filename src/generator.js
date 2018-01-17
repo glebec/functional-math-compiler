@@ -1,7 +1,5 @@
 'use strict'; // eslint-disable-line semi
 
-// const { ParseTree } = require('./parser')
-
 // The generator is where using Daggy pays off beautifully. Catamorphisms are
 // ideal for recursing through the parse tree and dispatching on node type.
 

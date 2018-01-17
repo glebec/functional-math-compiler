@@ -17,9 +17,6 @@ const Token = daggy.taggedSum('Token', {
 	Sub: [],
 })
 
-// for easier debugging with `util.inspect`
-Token.prototype.inspect = Token.prototype.toString
-
 const matchers = [
 	{ type: 'Number', pattern: /^\d+/ },
 	{ type: 'Lparen', pattern: /^\(/  },
