@@ -1,4 +1,4 @@
-# Functional JS Arithmetic Exprsssion Compiler
+# Functional JS Arithmetic Expression Compiler
 
 Compiler exercise for education. Parsing infix arithmetic expressions via LL(1) recursive descent, adhering to functional approaches.
 
