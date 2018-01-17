@@ -8,9 +8,9 @@
 // evaluate :: ParseTree -> Number
 const evaluate = tree => tree.cata({
 	// convert string to JS float
-	Natural: value => +value,
+	Number: value => +value,
 	// possibly negate a factor
-	Factor: (child, sign) => evaluate(child) * evaluate(sign),
+	Factor: (sign, child) => evaluate(sign) * evaluate(child),
 	// convert sign to multiplier
 	Sub: () => -1,
 	// combine (possibly inverse) factor with following value
@@ -36,9 +36,9 @@ const evaluate = tree => tree.cata({
 // rpn :: ParseTree -> String
 const rpn = tree => tree.cata({
 	// number is already a string
-	Natural: id => id,
+	Number: id => id,
 	// possibly negate a factor
-	Factor: (child, sign) => rpn(child) + rpn(sign),
+	Factor: (sign, child) => rpn(child) + rpn(sign),
 	// convert sign to multiplier
 	Sub: () => ' -1 *',
 	// move operator to postfix
@@ -63,5 +63,5 @@ const rpn = tree => tree.cata({
 
 module.exports = {
 	evaluate,
-	rpn
+	rpn,
 }

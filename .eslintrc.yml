@@ -4,3 +4,4 @@ parser: babel-eslint
 extends: fullstack
 rules:
     semi: [1, never]
+    comma-dangle: [1, always-multiline]

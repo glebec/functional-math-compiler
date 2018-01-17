@@ -18,7 +18,7 @@ const Token = daggy.taggedSum('Token', {
 })
 
 // for easier debugging with `util.inspect`
-Token.prototype.inspect = function () { return this.toString() }
+Token.prototype.inspect = Token.prototype.toString
 
 const matchers = [
 	{ type: 'Number', pattern: /^\d+/ },
@@ -28,7 +28,7 @@ const matchers = [
 	{ type: 'Div',    pattern: /^\//  },
 	{ type: 'Add',    pattern: /^\+/  },
 	{ type: 'Sub',    pattern: /^-/   },
-	{ type: 'space',  pattern: /^\s+/  }
+	{ type: 'space',  pattern: /^\s+/  },
 ]
 
 // lex :: String -> [Token]
@@ -45,7 +45,7 @@ const lex = inputStr => {
 			const possibleMatch = matcher.pattern.exec(inputStr)
 			return possibleMatch && {
 				type: matcher.type,
-				value: possibleMatch[0]
+				value: possibleMatch[0],
 			}
 		},
 		null
@@ -66,11 +66,10 @@ const lex = inputStr => {
 	const remaining = inputStr.slice(match.value.length)
 
 	// efficient unshift from Immutable.js List
-	// eslint-disable-next-line new-cap
 	return lex(remaining).unshift(token)
 }
 
 module.exports = {
 	Token,
-	lex
+	lex,
 }

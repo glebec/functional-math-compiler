@@ -4,10 +4,10 @@ Compiler exercise for education. Parsing infix arithmetic expressions via LL(1) 
 
 ## Features
 
-* Pure functions only (no side effects, no mutations, all `const` etc.)
+* Pure functions only: no side effects (apart from STDOUT), no mutations, all `const` etc.
 * Uses `daggy` for tagged unions (aka sum types)
 	* Enables type checking e.g. `Token.Number.is(x)` and `Token.is(x)`
-	* Enables simple pattern matching / catamorphisms e.g. `someToken.cata({ Mul: () => true, Div: () => false })`
+	* Enables simple pattern matching / catamorphisms e.g. `someToken.cata({ Mul: () => true, Div: () => false })` with automatic errors in case of match failure
 * Uses Immutable.js List for functional collections
 	* Enables efficient `unshift`, `push`, and `slice`
 	* Immutability provides strong reasoning benefits
@@ -23,7 +23,8 @@ yarn start '-9 * 2 / -(3 + 7) + ((-4 * 1/2) - -21)' --eval # outputs num
 
 ### Supports
 
-* Integers (±)
+* Integers
+* Negation
 * Addition
 * Subtraction
 * Multiplication
@@ -46,10 +47,11 @@ Converts raw input string to an Immutable.js List of Daggy types (tokens):
 
 ### Parser
 
-Converts list of tokens to a parse tree, aka concrete syntax tree (mostly – uses `null` instead of epsilon):
+Converts list of tokens to a parse tree, aka concrete syntax tree:
 
+* Epsilon
 * Natural (value)
-* Factor (child, negate)
+* Factor (child, sign)
 * F2 (op, factor, childF2)
 * T2 (op, term, childT2)
 * Term (factor, childF2)

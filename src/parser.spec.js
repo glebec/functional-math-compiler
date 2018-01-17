@@ -11,45 +11,20 @@ const { Token, lex } = require('./lexer')
 const {
 	ParseTree,
 	parse,
-	parseNatural,
 	parseFactor,
 	parseF2,
 	parseTerm,
 	parseT2,
 	parseExpression,
+	parseSign,
 } = require('./parser')
 
 describe('parser', () => {
 
 	describe('token parsing functions:', () => {
 
-		describe('parseNatural', () => {
-
-			it('converts number token to natural node', () => {
-				const { PT } = parseNatural(lex('342'))
-				expect(ParseTree.Natural.is(PT)).to.be.true
-			})
-
-			it('natural node captures number token value', () => {
-				const { PT } = parseNatural(lex('342'))
-				expect(PT).to.be.an('object')
-				expect(PT).to.have.property('value')
-				expect(PT.value).to.equal('342')
-			})
-
-			it('consumes one token and returns the remainder', () => {
-				const tokens = lex('342')
-				expect(tokens).to.have.size(1)
-				const { tokens: remainder } = parseNatural(tokens)
-				expect(List.isList(remainder)).to.be.true
-				expect(remainder).to.have.size(0)
-			})
-
-			it('throws when given an incorrect token', () => {
-				const badParse = () => parseNatural(lex('-'))
-				expect(badParse).to.throw()
-			})
-
+		xdescribe('parseSign', () => {
+			// TODO
 		})
 
 		xdescribe('parseFactor', () => {
@@ -81,7 +56,7 @@ describe('parser', () => {
 		})
 
 		xit('builds a parse tree for a number', () => {
-			// todo
+			// TODO
 		})
 
 	})
