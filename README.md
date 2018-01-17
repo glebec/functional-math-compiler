@@ -50,18 +50,22 @@ Converts raw input string to an Immutable.js List of Daggy types (tokens):
 Converts list of tokens to a parse tree, aka concrete syntax tree:
 
 * Epsilon
-* Natural (value)
-* Factor (child, sign)
+* Factor (sign, child)
 * F2 (op, factor, childF2)
 * T2 (op, term, childT2)
 * Term (factor, childF2)
 * Expression (term, childT2)
 
-Note that a CST / PT preserves all or almost all of the syntax as represented by the language's grammar, whereas an Abstract Syntax Tree (AST) reduces the information to the bare minimum necessary for a given use case.
+Note that a CST / PT preserves all or almost all of the syntax as represented by the language's grammar, whereas an Abstract Syntax Tree (AST) reduces the information to the bare minimum necessary for a given use case. Currently our CST simplifies parenthetical expressions, though we could make it preserve parens.
 
 ### Generator
 
-In progress.
+Dispatches based on node type to recursively process the parse tree. Two generators included:
+
+* an infix -> RPN compiler
+* a numerical evaluator
+
+The latter generator can be chosen from the command line by appending the `--eval` flag.
 
 ## Grammar
 
