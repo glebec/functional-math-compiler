@@ -1,5 +1,7 @@
 # Functional JS Arithmetic Exprsssion Compiler
 
+[![Greenkeeper badge](https://badges.greenkeeper.io/glebec/functional-math-compiler.svg)](https://greenkeeper.io/)
+
 Compiler exercise for education. Parsing infix arithmetic expressions via LL(1) recursive descent, adhering to functional approaches.
 
 ## Features
