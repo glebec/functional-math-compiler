@@ -6,11 +6,11 @@ const chaiImmutable = require('chai-immutable')
 const { expect } = chai
 chai.use(chaiImmutable)
 
-const { lex } = require('./lexer')
-const { parse } = require('./parser')
+const { lex } = require('./1-lexer')
+const { parse } = require('./2-parser')
 const frontend = expressionStr => parse(lex(expressionStr))
 
-const { evaluate, rpn } = require('./generator')
+const { evaluate, rpn } = require('./3-generator')
 
 describe('generator', () => {
 

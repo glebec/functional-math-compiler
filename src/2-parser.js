@@ -4,7 +4,7 @@
 // a utility library for building Sum Types in JS
 const daggy = require('daggy')
 
-const { Token } = require('./lexer')
+const { Token } = require('./1-lexer')
 
 const ParseTree = daggy.taggedSum('ParseTree', {
 	Factor: ['sign', 'child'],
@@ -22,13 +22,13 @@ const ParseTree = daggy.taggedSum('ParseTree', {
 // parseSign :: List<Token> -> { PT, List<Token> }
 const parseSign = tokens => {
 
-	const next = tokens.first()
+	const next = tokens[0]
 
 	// S -> -
 	if (Token.Sub.is(next)) {
 		return {
 			PT: next, // tree nodes can be tokens
-			tokens: tokens.rest(), // one token is consumed
+			tokens: tokens.slice(1), // one token is consumed
 		}
 	}
 
@@ -42,27 +42,27 @@ const parseSign = tokens => {
 // parseFactor :: List<Token> -> { PT, List<Token> }
 const parseFactor = tokens => {
 
-	const next = tokens.first()
+	const next = tokens[0]
 
 	// F -> Number
 	if (Token.Number.is(next)) {
 		return {
 			PT: next,
-			tokens: tokens.rest(),
+			tokens: tokens.slice(1),
 		}
 	}
 
 	// F -> (E)
 	if (Token.Lparen.is(next)) {
 		// eslint-disable-next-line no-use-before-define
-		const expressionResult = parseExpression(tokens.rest()) // skip Lparen
+		const expressionResult = parseExpression(tokens.slice(1)) // skip Lparen
 		// confirm expression ends in Rparen
-		if (!Token.Rparen.is(expressionResult.tokens.first())) {
-			throw Error(`Unexpected token: ${expressionResult.tokens.first()}`)
+		if (!Token.Rparen.is(expressionResult.tokens[0])) {
+			throw Error(`Unexpected token: ${expressionResult.tokens[0]}`)
 		}
 		return {
 			PT: expressionResult.PT,
-			tokens: expressionResult.tokens.rest(), // omit Rparen
+			tokens: expressionResult.tokens.slice(1), // omit Rparen
 		}
 	}
 
@@ -81,7 +81,7 @@ const parseFactor = tokens => {
 // parseB :: List<Token> -> { PT, List<Token> }
 const parseF2 = tokens => {
 
-	const next = tokens.first()
+	const next = tokens[0]
 
 	// F2 -> epsilon
 	const isMul = Token.Mul.is(next)
@@ -95,7 +95,7 @@ const parseF2 = tokens => {
 
 	// F2 -> * F F2 | / F F2
 	const op = next
-	const factorResult = parseFactor(tokens.rest())
+	const factorResult = parseFactor(tokens.slice(1))
 	const f2Result = parseF2(factorResult.tokens)
 	return {
 		PT: ParseTree.F2(
@@ -124,7 +124,7 @@ const parseTerm = tokens => {
 // parseA :: List<Token> -> { PT, List<Token> }
 const parseT2 = tokens => {
 
-	const next = tokens.first()
+	const next = tokens[0]
 
 	// T2 -> epsilon
 	const isAdd = Token.Add.is(next)
@@ -138,7 +138,7 @@ const parseT2 = tokens => {
 
 	// T2 -> + T T2 | - T T2
 	const op = next
-	const termResult = parseTerm(tokens.rest())
+	const termResult = parseTerm(tokens.slice(1))
 	const t2Result = parseT2(termResult.tokens)
 	return {
 		PT: ParseTree.T2(

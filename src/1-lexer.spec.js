@@ -6,7 +6,7 @@ const chaiImmutable = require('chai-immutable')
 const { expect } = chai
 chai.use(chaiImmutable)
 
-const { Token, lex } = require('./lexer')
+const { Token, lex } = require('./1-lexer')
 
 describe('Token', () => {
 
@@ -56,7 +56,7 @@ describe('Token', () => {
 			'Mul',
 			'Div',
 			'Add',
-			'Sub'
+			'Sub',
 		]
 
 		typeNames.forEach(typeName => {
@@ -109,32 +109,32 @@ describe('`lex`', () => {
 
 	it(`converts '1' to List<Number(1)>`, () => {
 		const tokens = lex('1')
-		expect(tokens).to.have.size(1)
+		expect(tokens).to.have.length(1)
 		expect(allTokens(tokens)).to.be.true
-		expect(Token.Number.is(tokens.first())).to.be.true
+		expect(Token.Number.is(tokens[0])).to.be.true
 	})
 
 	it(`converts '1+2' to proper tokens]`, () => {
 		const tokens = lex('1+2')
-		expect(tokens).to.have.size(3)
+		expect(tokens).to.have.length(3)
 		expect(allTokens(tokens)).to.be.true
-		expect(Token.Number.is(tokens.first())).to.be.true
-		expect(Token.Add.is(tokens.get(1))).to.be.true
-		expect(Token.Number.is(tokens.get(2))).to.be.true
+		expect(Token.Number.is(tokens[0])).to.be.true
+		expect(Token.Add.is(tokens[1])).to.be.true
+		expect(Token.Number.is(tokens[2])).to.be.true
 	})
 
 	it(`converts '1 + 2', ignoring whitespace`, () => {
 		const tokens = lex('1+2')
-		expect(tokens).to.have.size(3)
+		expect(tokens).to.have.length(3)
 		expect(allTokens(tokens)).to.be.true
-		expect(Token.Number.is(tokens.first())).to.be.true
-		expect(Token.Add.is(tokens.get(1))).to.be.true
-		expect(Token.Number.is(tokens.get(2))).to.be.true
+		expect(Token.Number.is(tokens[0])).to.be.true
+		expect(Token.Add.is(tokens[1])).to.be.true
+		expect(Token.Number.is(tokens[2])).to.be.true
 	})
 
 	it(`converts '-5 * (1  + 2)/ 3 '`, () => {
 		const tokens = lex('-5 * (1  + 2)/ 3 ')
-		expect(tokens).to.have.size(10)
+		expect(tokens).to.have.length(10)
 		expect(allTokens(tokens)).to.be.true
 		const expectedTypes = [
 			'Sub',
@@ -146,10 +146,10 @@ describe('`lex`', () => {
 			'Number',
 			'Rparen',
 			'Div',
-			'Number'
+			'Number',
 		]
 		expectedTypes.forEach((name, idx) =>
-			expect(Token[name].is(tokens.get(idx))).to.be.true
+			expect(Token[name].is(tokens[idx])).to.be.true
 		)
 	})
 

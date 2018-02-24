@@ -7,7 +7,7 @@ const chaiImmutable = require('chai-immutable')
 const { expect } = chai
 chai.use(chaiImmutable)
 
-const { Token, lex } = require('./lexer')
+const { Token, lex } = require('./1-lexer')
 const {
 	ParseTree,
 	parse,
@@ -17,7 +17,7 @@ const {
 	parseT2,
 	parseExpression,
 	parseSign,
-} = require('./parser')
+} = require('./2-parser')
 
 describe('parser', () => {
 

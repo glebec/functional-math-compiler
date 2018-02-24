@@ -3,9 +3,6 @@
 // a utility library for building Sum Types in JS
 const daggy = require('daggy')
 
-// a functional (immutable) list with efficient ops
-const { List } = require('immutable')
-
 // a representative type (of multiple type constructors)
 const Token = daggy.taggedSum('Token', {
 	Number: ['value'], // a parameterized type
@@ -33,7 +30,7 @@ const lex = inputStr => {
 
 	if (!inputStr) {
 		// eslint-disable-next-line new-cap
-		return List()
+		return []
 	}
 
 	const match = matchers.reduce(
@@ -62,8 +59,7 @@ const lex = inputStr => {
 
 	const remaining = inputStr.slice(match.value.length)
 
-	// efficient unshift from Immutable.js List
-	return lex(remaining).unshift(token)
+	return [token, ...lex(remaining)]
 }
 
 module.exports = {

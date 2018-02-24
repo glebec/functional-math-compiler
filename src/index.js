@@ -1,8 +1,8 @@
 'use strict'; // eslint-disable-line semi
 
-const { lex } = require('./lexer')
-const { parse } = require('./parser')
-const { evaluate, rpn } = require('./generator')
+const { lex } = require('./1-lexer')
+const { parse } = require('./2-parser')
+const { evaluate, rpn } = require('./3-generator')
 
 // impurity! External input! Oh what a world…
 const inputStr = process.argv[2]
