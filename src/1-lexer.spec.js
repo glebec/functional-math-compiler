@@ -2,9 +2,7 @@
 /* eslint-disable no-unused-expressions */
 
 const chai = require('chai')
-const chaiImmutable = require('chai-immutable')
 const { expect } = chai
-chai.use(chaiImmutable)
 
 const { lex } = require('./1-lexer')
 
@@ -36,7 +34,7 @@ describe('`lex`', () => {
 		expect(tokens).to.have.length(3)
 		expect(allTokens(tokens)).to.be.true
 		expect(tokens[0].type).to.equal('Number')
-		expect(tokens[1].type).to.equal('Add')
+		expect(tokens[1].type).to.equal('Plus')
 		expect(tokens[2].type).to.equal('Number')
 	})
 
@@ -45,7 +43,7 @@ describe('`lex`', () => {
 		expect(tokens).to.have.length(3)
 		expect(allTokens(tokens)).to.be.true
 		expect(tokens[0].type).to.equal('Number')
-		expect(tokens[1].type).to.equal('Add')
+		expect(tokens[1].type).to.equal('Plus')
 		expect(tokens[2].type).to.equal('Number')
 	})
 
@@ -54,15 +52,15 @@ describe('`lex`', () => {
 		expect(tokens).to.have.length(10)
 		expect(allTokens(tokens)).to.be.true
 		const expectedTypes = [
-			'Sub',
+			'Minus',
 			'Number',
-			'Mul',
+			'Star',
 			'LParen',
 			'Number',
-			'Add',
+			'Plus',
 			'Number',
 			'RParen',
-			'Div',
+			'Slash',
 			'Number',
 		]
 		expectedTypes.forEach((name, idx) =>

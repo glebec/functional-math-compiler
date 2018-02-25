@@ -2,16 +2,6 @@
 const { inspect } = require('util')
 /* eslint-disable new-cap */
 
-// const ParseTree = daggy.taggedSum('ParseTree', {
-// 	Factor: ['sign', 'child'],
-// 	F2: ['op', 'factor', 'childF2'],
-// 	T2: ['op', 'term', 'childT2'],
-// 	Term: ['factor', 'childF2'],
-// 	Expression: ['term', 'childT2'],
-// 	EpsilonF: [], // multiplicative identity
-// 	EpsilonT: [], // additive identity
-// })
-
 // All the sub-parsers take an Array of Tokens, and return a tuple of
 // (a token or parse tree) and (the tokens which the parser did not consume).
 
@@ -20,15 +10,15 @@ const parseSign = tokens => {
 
 	const next = tokens[0]
 
-	// S -> Sub
-	if (next && next.type === 'Sub') {
+	// S -> -
+	if (next && next.type === 'Minus') {
 		return {
 			PT: next, // tree nodes can be tokens
 			remainingTokens: tokens.slice(1), // one token is consumed
 		}
 	}
 
-	// S -> EpsilonS
+	// Sign -> EpsilonS
 	return {
 		PT: { type: 'EpsilonS' }, // indicate no `-` sign found
 		remainingTokens: tokens, // no tokens were consumed
@@ -40,7 +30,7 @@ const parseFactor = tokens => {
 
 	const next = tokens[0]
 
-	// F -> Number
+	// Factor -> Number
 	if (next && next.type === 'Number') {
 		return {
 			PT: next,
@@ -48,7 +38,7 @@ const parseFactor = tokens => {
 		}
 	}
 
-	// F -> (E)
+	// Factor -> (Expression)
 	if (next && next.type === 'LParen') {
 		// eslint-disable-next-line no-use-before-define
 		const expressionResult = parseExpression(tokens.slice(1)) // skip LParen
@@ -59,12 +49,15 @@ const parseFactor = tokens => {
 			}`)
 		}
 		return {
-			PT: expressionResult.PT,
+			PT: {
+				type: 'Group',
+				child: expressionResult.PT,
+			},
 			remainingTokens: expressionResult.remainingTokens.slice(1), // omit Rparen
 		}
 	}
 
-	// F -> S F
+	// Factor -> Sign Factor
 	const signResult = parseSign(tokens)
 	const factorResult = parseFactor(signResult.remainingTokens)
 	return {
@@ -82,17 +75,17 @@ const parseF2 = tokens => {
 
 	const next = tokens[0]
 
-	// F2 -> epsilon
-	const isMul = next && next.type === 'Mul'
-	const isDiv = next && next.type === 'Div'
-	if (!isMul && !isDiv) {
+	// F2 -> EpsilonF
+	const isStar  = next && next.type === 'Star'
+	const isSlash = next && next.type === 'Slash'
+	if (!isStar && !isSlash) {
 		return {
 			PT: { type: 'EpsilonF' },
 			remainingTokens: tokens,
 		}
 	}
 
-	// F2 -> * F F2 | / F F2
+	// F2 -> * Factor F2 | / Factor F2
 	const op = next
 	const factorResult = parseFactor(tokens.slice(1))
 	const f2Result = parseF2(factorResult.remainingTokens)
@@ -109,7 +102,7 @@ const parseF2 = tokens => {
 
 // parseTerm :: [Token] -> { PT: ParseTree, remainingTokens: [Token] }
 const parseTerm = tokens => {
-	// T -> F F2
+	// Term -> Factor F2
 	const factorResult = parseFactor(tokens)
 	const f2Result = parseF2(factorResult.remainingTokens)
 	return {
@@ -127,9 +120,9 @@ const parseT2 = tokens => {
 
 	const next = tokens[0]
 
-	// T2 -> epsilon
-	const isAdd = next && next.type === 'Add'
-	const isSub = next && next.type === 'Sub'
+	// T2 -> EpsilonT
+	const isAdd = next && next.type === 'Plus'
+	const isSub = next && next.type === 'Minus'
 	if (!isAdd && !isSub) {
 		return {
 			PT: { type: 'EpsilonT' },
@@ -137,7 +130,7 @@ const parseT2 = tokens => {
 		}
 	}
 
-	// T2 -> + T T2 | - T T2
+	// T2 -> + Term T2 | - Term T2
 	const op = next
 	const termResult = parseTerm(tokens.slice(1))
 	const t2Result = parseT2(termResult.remainingTokens)
@@ -154,7 +147,7 @@ const parseT2 = tokens => {
 
 // parseExpression :: [Token] -> { PT: ParseTree, remainingTokens: [Token] }
 const parseExpression = tokens => {
-	// E -> T T2
+	// Expression -> Term T2
 	const termResult = parseTerm(tokens)
 	const t2Result = parseT2(termResult.remainingTokens)
 	return {

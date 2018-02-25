@@ -1,11 +1,8 @@
 'use strict'; // eslint-disable-line semi
 /* eslint-disable no-unused-expressions */
 
-const { List } = require('immutable')
 const chai = require('chai')
-const chaiImmutable = require('chai-immutable')
 const { expect } = chai
-chai.use(chaiImmutable)
 
 const { Token, lex } = require('./1-lexer')
 const {

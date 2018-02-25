@@ -4,11 +4,11 @@ const matchers = [
 	{ type: 'Number', regex: /^\d+/ },
 	{ type: 'LParen', regex: /^\(/  },
 	{ type: 'RParen', regex: /^\)/  },
-	{ type: 'Mul',    regex: /^\*/  },
-	{ type: 'Div',    regex: /^\//  },
-	{ type: 'Add',    regex: /^\+/  },
-	{ type: 'Sub',    regex: /^-/   },
-	{ type: 'space',  regex: /^\s+/ },
+	{ type: 'Star',   regex: /^\*/  },
+	{ type: 'Slash',  regex: /^\//  },
+	{ type: 'Plus',   regex: /^\+/  },
+	{ type: 'Minus',  regex: /^-/   },
+	{ type: 'Space',  regex: /^\s+/ },
 ]
 
 // Read: `lex` is a function taking a String and returning an Array of Tokens
@@ -39,7 +39,7 @@ const lex = inputStr => {
 		throw Error(`Parse error at: ${inputStr}`)
 	}
 
-	if (match.type === 'space') {
+	if (match.type === 'Space') {
 		return lex(inputStr.slice(1))
 	}
 

@@ -2,15 +2,13 @@
 /* eslint-disable no-unused-expressions */
 
 const chai = require('chai')
-const chaiImmutable = require('chai-immutable')
 const { expect } = chai
-chai.use(chaiImmutable)
 
 const { lex } = require('./1-lexer')
 const { parse } = require('./2-parser')
 const frontend = expressionStr => parse(lex(expressionStr))
 
-const { evaluate, rpn } = require('./3-generator')
+const { evaluate, rpn, original } = require('./3-generator')
 
 describe('generator', () => {
 
@@ -132,6 +130,31 @@ describe('generator', () => {
 			const tree = frontend('-9 * 2 / -(3 + 7) + ((-4 * 1/2) - -21)')
 			expect(rpn(tree)).to.equal('9 -1 * 2 * 3 7 + -1 * / 4 -1 * 1 * 2 / 21 -1 * - +')
 		})
+
+	})
+
+	describe('original', () => {
+
+		it('is a function', () => {
+			expect(original).to.be.a('function')
+		})
+
+		const examples = [
+			'1',
+			'1 + 2',
+			'-3',
+			'(1)',
+			'-(2 + 4)',
+			'4 * 3 / 1 + 2 / 8',
+			'-9 * 2 / -(3 + 7) + ((-4 * 1 / 2) - -21)',
+		]
+
+		examples.forEach(example => it(
+			`compiles ${example} back to itself`, () => {
+				const tree = frontend(example)
+				expect(original(tree)).to.equal(example)
+			}
+		))
 
 	})
 
