@@ -1,42 +1,32 @@
 'use strict'; // eslint-disable-line semi
 
-// a utility library for building Sum Types in JS
-const daggy = require('daggy')
-
-// a representative type (of multiple type constructors)
-const Token = daggy.taggedSum('Token', {
-	Number: ['value'], // a parameterized type
-	Lparen: [], // an non-parameterized type
-	Rparen: [],
-	Mul: [],
-	Div: [],
-	Add: [],
-	Sub: [],
-})
-
 const matchers = [
-	{ type: 'Number', pattern: /^\d+/ },
-	{ type: 'Lparen', pattern: /^\(/  },
-	{ type: 'Rparen', pattern: /^\)/  },
-	{ type: 'Mul',    pattern: /^\*/  },
-	{ type: 'Div',    pattern: /^\//  },
-	{ type: 'Add',    pattern: /^\+/  },
-	{ type: 'Sub',    pattern: /^-/   },
-	{ type: 'space',  pattern: /^\s+/  },
+	{ type: 'Number', regex: /^\d+/ },
+	{ type: 'LParen', regex: /^\(/  },
+	{ type: 'RParen', regex: /^\)/  },
+	{ type: 'Mul',    regex: /^\*/  },
+	{ type: 'Div',    regex: /^\//  },
+	{ type: 'Add',    regex: /^\+/  },
+	{ type: 'Sub',    regex: /^-/   },
+	{ type: 'space',  regex: /^\s+/ },
 ]
+
+// Read: `lex` is a function taking a String and returning an Array of Tokens
+// (for our purposes, a Token is just an object with `.type` property)
 
 // lex :: String -> [Token]
 const lex = inputStr => {
 
+	// Your job: implement this function
+
 	if (!inputStr) {
-		// eslint-disable-next-line new-cap
 		return []
 	}
 
 	const match = matchers.reduce(
 		(foundMatch, matcher) => {
 			if (foundMatch) return foundMatch
-			const possibleMatch = matcher.pattern.exec(inputStr)
+			const possibleMatch = matcher.regex.exec(inputStr)
 			return possibleMatch && {
 				type: matcher.type,
 				value: possibleMatch[0],
@@ -54,15 +44,15 @@ const lex = inputStr => {
 	}
 
 	const token = (match.type === 'Number')
-		? Token.Number(match.value)
-		: Token[match.type]
+		? { type: 'Number', value: match.value }
+		: { type: match.type }
 
 	const remaining = inputStr.slice(match.value.length)
 
 	return [token, ...lex(remaining)]
 }
 
+// This makes `lex` available to other JS files in Node
 module.exports = {
-	Token,
 	lex,
 }

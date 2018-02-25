@@ -1,174 +1,176 @@
 'use strict'; // eslint-disable-line semi
+const { inspect } = require('util')
 /* eslint-disable new-cap */
 
-// a utility library for building Sum Types in JS
-const daggy = require('daggy')
+// const ParseTree = daggy.taggedSum('ParseTree', {
+// 	Factor: ['sign', 'child'],
+// 	F2: ['op', 'factor', 'childF2'],
+// 	T2: ['op', 'term', 'childT2'],
+// 	Term: ['factor', 'childF2'],
+// 	Expression: ['term', 'childT2'],
+// 	EpsilonF: [], // multiplicative identity
+// 	EpsilonT: [], // additive identity
+// })
 
-const { Token } = require('./1-lexer')
-
-const ParseTree = daggy.taggedSum('ParseTree', {
-	Factor: ['sign', 'child'],
-	F2: ['op', 'factor', 'childF2'],
-	T2: ['op', 'term', 'childT2'],
-	Term: ['factor', 'childF2'],
-	Expression: ['term', 'childT2'],
-	EpsilonF: [], // multiplicative identity
-	EpsilonT: [], // additive identity
-})
-
-// All the sub-parsers take a List of Tokens, and return a tuple of
+// All the sub-parsers take an Array of Tokens, and return a tuple of
 // (a token or parse tree) and (the tokens which the parser did not consume).
 
-// parseSign :: List<Token> -> { PT, List<Token> }
+// parseSign :: [Token] -> { PT: ParseTree, remainingTokens: [Token] }
 const parseSign = tokens => {
 
 	const next = tokens[0]
 
-	// S -> -
-	if (Token.Sub.is(next)) {
+	// S -> Sub
+	if (next && next.type === 'Sub') {
 		return {
 			PT: next, // tree nodes can be tokens
-			tokens: tokens.slice(1), // one token is consumed
+			remainingTokens: tokens.slice(1), // one token is consumed
 		}
 	}
 
-	// S -> epsilon
+	// S -> EpsilonS
 	return {
-		PT: ParseTree.EpsilonF, // multiplicative identity
-		tokens, // no tokens were consumed
+		PT: { type: 'EpsilonS' }, // indicate no `-` sign found
+		remainingTokens: tokens, // no tokens were consumed
 	}
 }
 
-// parseFactor :: List<Token> -> { PT, List<Token> }
+// parseFactor :: [Token] -> { PT: ParseTree, remainingTokens: [Token] }
 const parseFactor = tokens => {
 
 	const next = tokens[0]
 
 	// F -> Number
-	if (Token.Number.is(next)) {
+	if (next && next.type === 'Number') {
 		return {
 			PT: next,
-			tokens: tokens.slice(1),
+			remainingTokens: tokens.slice(1),
 		}
 	}
 
 	// F -> (E)
-	if (Token.Lparen.is(next)) {
+	if (next && next.type === 'LParen') {
 		// eslint-disable-next-line no-use-before-define
-		const expressionResult = parseExpression(tokens.slice(1)) // skip Lparen
-		// confirm expression ends in Rparen
-		if (!Token.Rparen.is(expressionResult.tokens[0])) {
-			throw Error(`Unexpected token: ${expressionResult.tokens[0]}`)
+		const expressionResult = parseExpression(tokens.slice(1)) // skip LParen
+		// confirm expression ends in RParen
+		if (expressionResult.remainingTokens[0].type !== 'RParen') {
+			throw Error(`Unexpected token: ${
+				inspect(expressionResult.remainingTokens[0], false, null)
+			}`)
 		}
 		return {
 			PT: expressionResult.PT,
-			tokens: expressionResult.tokens.slice(1), // omit Rparen
+			remainingTokens: expressionResult.remainingTokens.slice(1), // omit Rparen
 		}
 	}
 
 	// F -> S F
 	const signResult = parseSign(tokens)
-	const factorResult = parseFactor(signResult.tokens)
+	const factorResult = parseFactor(signResult.remainingTokens)
 	return {
-		PT: ParseTree.Factor(
-			signResult.PT,
-			factorResult.PT,
-		),
-		tokens: factorResult.tokens,
+		PT: {
+			type: 'Factor',
+			sign: signResult.PT,
+			child: factorResult.PT,
+		},
+		remainingTokens: factorResult.remainingTokens,
 	}
 }
 
-// parseB :: List<Token> -> { PT, List<Token> }
+// parseB :: [Token] -> { PT: ParseTree, remainingTokens: [Token] }
 const parseF2 = tokens => {
 
 	const next = tokens[0]
 
 	// F2 -> epsilon
-	const isMul = Token.Mul.is(next)
-	const isDiv = Token.Div.is(next)
+	const isMul = next && next.type === 'Mul'
+	const isDiv = next && next.type === 'Div'
 	if (!isMul && !isDiv) {
 		return {
-			PT: ParseTree.EpsilonF,
-			tokens,
+			PT: { type: 'EpsilonF' },
+			remainingTokens: tokens,
 		}
 	}
 
 	// F2 -> * F F2 | / F F2
 	const op = next
 	const factorResult = parseFactor(tokens.slice(1))
-	const f2Result = parseF2(factorResult.tokens)
+	const f2Result = parseF2(factorResult.remainingTokens)
 	return {
-		PT: ParseTree.F2(
-			op,
-			factorResult.PT,
-			f2Result.PT,
-		),
-		tokens: f2Result.tokens,
+		PT: {
+			type: 'F2',
+			op: op,
+			factor: factorResult.PT,
+			childF2: f2Result.PT,
+		},
+		remainingTokens: f2Result.remainingTokens,
 	}
 }
 
-// parseTerm :: List<Token> -> { PT, List<Token> }
+// parseTerm :: [Token] -> { PT: ParseTree, remainingTokens: [Token] }
 const parseTerm = tokens => {
 	// T -> F F2
 	const factorResult = parseFactor(tokens)
-	const f2Result = parseF2(factorResult.tokens)
+	const f2Result = parseF2(factorResult.remainingTokens)
 	return {
-		PT: ParseTree.Term(
-			factorResult.PT,
-			f2Result.PT,
-		),
-		tokens: f2Result.tokens,
+		PT: {
+			type: 'Term',
+			factor: factorResult.PT,
+			childF2: f2Result.PT,
+		},
+		remainingTokens: f2Result.remainingTokens,
 	}
 }
 
-// parseA :: List<Token> -> { PT, List<Token> }
+// parseA :: [Token] -> { PT: ParseTree, remainingTokens: [Token] }
 const parseT2 = tokens => {
 
 	const next = tokens[0]
 
 	// T2 -> epsilon
-	const isAdd = Token.Add.is(next)
-	const isSub = Token.Sub.is(next)
+	const isAdd = next && next.type === 'Add'
+	const isSub = next && next.type === 'Sub'
 	if (!isAdd && !isSub) {
 		return {
-			PT: ParseTree.EpsilonT,
-			tokens,
+			PT: { type: 'EpsilonT' },
+			remainingTokens: tokens,
 		}
 	}
 
 	// T2 -> + T T2 | - T T2
 	const op = next
 	const termResult = parseTerm(tokens.slice(1))
-	const t2Result = parseT2(termResult.tokens)
+	const t2Result = parseT2(termResult.remainingTokens)
 	return {
-		PT: ParseTree.T2(
-			op,
-			termResult.PT,
-			t2Result.PT,
-		),
-		tokens: t2Result.tokens,
+		PT: {
+			type: 'T2',
+			op: op,
+			term: termResult.PT,
+			childT2: t2Result.PT,
+		},
+		remainingTokens: t2Result.remainingTokens,
 	}
 }
 
-// parseExpression :: List<Token> -> { PT, List<Token> }
+// parseExpression :: [Token] -> { PT: ParseTree, remainingTokens: [Token] }
 const parseExpression = tokens => {
 	// E -> T T2
 	const termResult = parseTerm(tokens)
-	const t2Result = parseT2(termResult.tokens)
+	const t2Result = parseT2(termResult.remainingTokens)
 	return {
-		PT: ParseTree.Expression(
-			termResult.PT,
-			t2Result.PT
-		),
-		tokens: t2Result.tokens,
+		PT: {
+			type: 'Expression',
+			term: termResult.PT,
+			childT2: t2Result.PT,
+		},
+		remainingTokens: t2Result.remainingTokens,
 	}
 }
 
-// parse :: List<Token> -> ParseTree
+// parse :: [Token] -> ParseTree
 const parse = tokens => parseExpression(tokens).PT
 
 module.exports = {
-	ParseTree,
 	parseFactor,
 	parseF2,
 	parseTerm,
