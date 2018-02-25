@@ -150,11 +150,15 @@ describe('generator', () => {
 		]
 
 		examples.forEach(example => it(
-			`compiles ${example} back to itself`, () => {
+			`compiles \`${example}\` back to itself`, () => {
 				const tree = frontend(example)
 				expect(original(tree)).to.equal(example)
 			}
 		))
+
+		it('improves the whitepsace for `  4*     3   /1`', () => {
+			expect(original(frontend('  4*     3   /1'))).to.equal('4 * 3 / 1')
+		})
 
 	})
 

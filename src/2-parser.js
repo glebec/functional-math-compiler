@@ -1,5 +1,4 @@
 'use strict'; // eslint-disable-line semi
-const { inspect } = require('util')
 /* eslint-disable new-cap */
 
 // All the sub-parsers take an Array of Tokens, and return a tuple of
@@ -10,7 +9,7 @@ const parseSign = tokens => {
 
 	const next = tokens[0]
 
-	// S -> -
+	// Sign -> -
 	if (next && next.type === 'Minus') {
 		return {
 			PT: next, // tree nodes can be tokens
@@ -42,18 +41,12 @@ const parseFactor = tokens => {
 	if (next && next.type === 'LParen') {
 		// eslint-disable-next-line no-use-before-define
 		const expressionResult = parseExpression(tokens.slice(1)) // skip LParen
-		// confirm expression ends in RParen
-		if (expressionResult.remainingTokens[0].type !== 'RParen') {
-			throw Error(`Unexpected token: ${
-				inspect(expressionResult.remainingTokens[0], false, null)
-			}`)
-		}
 		return {
 			PT: {
 				type: 'Group',
 				child: expressionResult.PT,
 			},
-			remainingTokens: expressionResult.remainingTokens.slice(1), // omit Rparen
+			remainingTokens: expressionResult.remainingTokens.slice(1), // skip Rparen
 		}
 	}
 
