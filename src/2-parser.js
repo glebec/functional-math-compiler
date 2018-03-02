@@ -24,7 +24,7 @@ const parseFactor = tokens => {
 		return {
 			PT: {
 				type: 'Group',
-				child: expressionResult.PT,
+				childExpression: expressionResult.PT,
 			},
 			remainingTokens: expressionResult.remainingTokens.slice(1), // skip Rparen
 		}
@@ -36,7 +36,7 @@ const parseFactor = tokens => {
 		return {
 			PT: {
 				type: 'Negation',
-				child: factorResult.PT,
+				childFactor: factorResult.PT,
 			},
 			remainingTokens: factorResult.remainingTokens,
 		}
@@ -68,7 +68,7 @@ const parseF2 = tokens => {
 		PT: {
 			type: 'F2',
 			op: op,
-			factor: factorResult.PT,
+			childFactor: factorResult.PT,
 			childF2: f2Result.PT,
 		},
 		remainingTokens: f2Result.remainingTokens,
@@ -83,7 +83,7 @@ const parseTerm = tokens => {
 	return {
 		PT: {
 			type: 'Term',
-			factor: factorResult.PT,
+			childFactor: factorResult.PT,
 			childF2: f2Result.PT,
 		},
 		remainingTokens: f2Result.remainingTokens,
@@ -113,7 +113,7 @@ const parseT2 = tokens => {
 		PT: {
 			type: 'T2',
 			op: op,
-			term: termResult.PT,
+			childTerm: termResult.PT,
 			childT2: t2Result.PT,
 		},
 		remainingTokens: t2Result.remainingTokens,
@@ -128,7 +128,7 @@ const parseExpression = tokens => {
 	return {
 		PT: {
 			type: 'Expression',
-			term: termResult.PT,
+			childTerm: termResult.PT,
 			childT2: t2Result.PT,
 		},
 		remainingTokens: t2Result.remainingTokens,

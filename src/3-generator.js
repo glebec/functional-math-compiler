@@ -8,10 +8,10 @@ const evaluate = node => { // eslint-disable-line complexity
 		// convert string to JS float
 		case 'Number': return +node.value
 		// negate a factor
-		case 'Negation': return -1 * evaluate(node.child)
+		case 'Negation': return -1 * evaluate(node.childFactor)
 		// combine (possibly inverse) factor with following value
 		case 'F2': {
-			const factor = evaluate(node.factor)
+			const factor = evaluate(node.childFactor)
 			const childF2 = evaluate(node.childF2)
 			if (node.op.type === 'Star')  return     factor * childF2
 			if (node.op.type === 'Slash') return 1 / factor * childF2
@@ -21,7 +21,7 @@ const evaluate = node => { // eslint-disable-line complexity
 		case 'EpsilonF': return 1
 		// combine (possibly inverse) term with following value
 		case 'T2': {
-			const term = evaluate(node.term)
+			const term = evaluate(node.childTerm)
 			const childT2 = evaluate(node.childT2)
 			if (node.op.type === 'Plus')  return      term + childT2
 			if (node.op.type === 'Minus') return -1 * term + childT2
@@ -30,11 +30,11 @@ const evaluate = node => { // eslint-disable-line complexity
 		// "nothing" term = additive identity
 		case 'EpsilonT': return 0
 		// combine factor with following value
-		case 'Term': return evaluate(node.factor) * evaluate(node.childF2)
+		case 'Term': return evaluate(node.childFactor) * evaluate(node.childF2)
 		// combine term with following value
-		case 'Expression': return evaluate(node.term) + evaluate(node.childT2)
+		case 'Expression': return evaluate(node.childTerm) + evaluate(node.childT2)
 		// grouped expressions are just the evaluation of their contents
-		case 'Group': return evaluate(node.child)
+		case 'Group': return evaluate(node.childExpression)
 		// how did you even get here?
 		default: break
 	}
@@ -48,10 +48,10 @@ const rpn = node => { // eslint-disable-line complexity
 		// number is already a string
 		case 'Number': return node.value
 		// negate a factor
-		case 'Negation': return rpn(node.child) + ' -1 *'
+		case 'Negation': return rpn(node.childFactor) + ' -1 *'
 		// move operator to postfix
 		case 'F2': {
-			const factor = rpn(node.factor)
+			const factor = rpn(node.childFactor)
 			const childF2 = rpn(node.childF2)
 			if (node.op.type === 'Star')  return ' ' + factor + ' *' + childF2
 			if (node.op.type === 'Slash') return ' ' + factor + ' /' + childF2
@@ -61,7 +61,7 @@ const rpn = node => { // eslint-disable-line complexity
 		case 'EpsilonF': return ''
 		// move operator to postfix
 		case 'T2': {
-			const term = rpn(node.term)
+			const term = rpn(node.childTerm)
 			const childT2 = rpn(node.childT2)
 			if (node.op.type === 'Plus')  return ' ' + term + ' +' + childT2
 			if (node.op.type === 'Minus') return ' ' + term + ' -' + childT2
@@ -70,11 +70,11 @@ const rpn = node => { // eslint-disable-line complexity
 		// "nothing" term = string identity
 		case 'EpsilonT': return ''
 		// combine factor with following value
-		case 'Term': return rpn(node.factor) + rpn(node.childF2)
+		case 'Term': return rpn(node.childFactor) + rpn(node.childF2)
 		// combine term with following value
-		case 'Expression': return rpn(node.term) + rpn(node.childT2)
+		case 'Expression': return rpn(node.childTerm) + rpn(node.childT2)
 		// RPN doesn't need parens — we can re-write the contents of a group
-		case 'Group': return rpn(node.child)
+		case 'Group': return rpn(node.childExpression)
 		// how did you even get here?
 		default: break
 	}
@@ -88,10 +88,10 @@ const original = node => { // eslint-disable-line complexity
 		// number is already a string
 		case 'Number': return node.value
 		// negate a factor
-		case 'Negation': return '-' + original(node.child)
+		case 'Negation': return '-' + original(node.childFactor)
 		// convert operation to string with nice whitespace
 		case 'F2': {
-			const factor = original(node.factor)
+			const factor = original(node.childFactor)
 			const childF2 = original(node.childF2)
 			if (node.op.type === 'Star')  return ' * ' + factor + childF2
 			if (node.op.type === 'Slash') return ' / ' + factor + childF2
@@ -101,7 +101,7 @@ const original = node => { // eslint-disable-line complexity
 		case 'EpsilonF': return ''
 		// convert operation to string with nice whitespace
 		case 'T2': {
-			const term = original(node.term)
+			const term = original(node.childTerm)
 			const childT2 = original(node.childT2)
 			if (node.op.type === 'Plus')  return ' + ' + term + childT2
 			if (node.op.type === 'Minus') return ' - ' + term + childT2
@@ -110,11 +110,11 @@ const original = node => { // eslint-disable-line complexity
 		// "nothing" term = string identity
 		case 'EpsilonT': return ''
 		// combine factor with following value
-		case 'Term': return original(node.factor) + original(node.childF2)
+		case 'Term': return original(node.childFactor) + original(node.childF2)
 		// combine term with following value
-		case 'Expression': return original(node.term) + original(node.childT2)
+		case 'Expression': return original(node.childTerm) + original(node.childT2)
 		// put string parens back around group contents
-		case 'Group': return '(' +  original(node.child) + ')'
+		case 'Group': return '(' +  original(node.childExpression) + ')'
 		// how did you even get here?
 		default: break
 	}
