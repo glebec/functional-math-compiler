@@ -10,8 +10,7 @@ describe('`lex`', () => {
 
 	/* eslint-disable no-unused-expressions */
 
-	const isToken = maybeToken => 'type' in maybeToken
-
+	const isToken = maybeToken => maybeToken.hasOwnProperty('type')
 	const allTokens = maybeTokens => maybeTokens.every(isToken)
 
 	it('is a function', () => {

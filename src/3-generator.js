@@ -7,12 +7,8 @@ const evaluate = node => { // eslint-disable-line complexity
 	switch (node.type) {
 		// convert string to JS float
 		case 'Number': return +node.value
-		// possibly negate a factor
-		case 'Factor': return evaluate(node.sign) * evaluate(node.child)
-		// convert sign to multiplier
-		case 'Minus': return -1
-		// "nothing" sign = multiplicative identity
-		case 'EpsilonS': return 1
+		// negate a factor
+		case 'Negation': return -1 * evaluate(node.child)
 		// combine (possibly inverse) factor with following value
 		case 'F2': {
 			const factor = evaluate(node.factor)
@@ -51,12 +47,8 @@ const rpn = node => { // eslint-disable-line complexity
 	switch (node.type) {
 		// number is already a string
 		case 'Number': return node.value
-		// possibly negate a factor
-		case 'Factor': return rpn(node.child) + rpn(node.sign)
-		// convert sign to multiplier
-		case 'Minus': return ' -1 *'
-		// "nothing" sign = string identity
-		case 'EpsilonS': return ''
+		// negate a factor
+		case 'Negation': return rpn(node.child) + ' -1 *'
 		// move operator to postfix
 		case 'F2': {
 			const factor = rpn(node.factor)
@@ -95,12 +87,8 @@ const original = node => { // eslint-disable-line complexity
 	switch (node.type) {
 		// number is already a string
 		case 'Number': return node.value
-		// possibly negate a factor
-		case 'Factor': return original(node.sign) + original(node.child)
-		// convert sign token to string
-		case 'Minus': return '-'
-		// "nothing" sign = string identity
-		case 'EpsilonS': return ''
+		// negate a factor
+		case 'Negation': return '-' + original(node.child)
 		// convert operation to string with nice whitespace
 		case 'F2': {
 			const factor = original(node.factor)

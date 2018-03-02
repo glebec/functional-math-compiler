@@ -47,9 +47,9 @@ const lex = inputStr => {
 		? { type: 'Number', value: match.value }
 		: { type: match.type }
 
-	const remaining = inputStr.slice(match.value.length)
+	const remainingString = inputStr.slice(match.value.length)
 
-	return [token, ...lex(remaining)]
+	return [token, ...lex(remainingString)]
 }
 
 // This makes `lex` available to other JS files in Node

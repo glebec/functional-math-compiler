@@ -4,33 +4,13 @@
 // All the sub-parsers take an Array of Tokens, and return a tuple of
 // (a token or parse tree) and (the tokens which the parser did not consume).
 
-// parseSign :: [Token] -> { PT: ParseTree, remainingTokens: [Token] }
-const parseSign = tokens => {
-
-	const next = tokens[0]
-
-	// Sign -> -
-	if (next && next.type === 'Minus') {
-		return {
-			PT: next, // tree nodes can be tokens
-			remainingTokens: tokens.slice(1), // one token is consumed
-		}
-	}
-
-	// Sign -> EpsilonS
-	return {
-		PT: { type: 'EpsilonS' }, // indicate no `-` sign found
-		remainingTokens: tokens, // no tokens were consumed
-	}
-}
-
 // parseFactor :: [Token] -> { PT: ParseTree, remainingTokens: [Token] }
 const parseFactor = tokens => {
 
 	const next = tokens[0]
 
 	// Factor -> Number
-	if (next && next.type === 'Number') {
+	if (next.type === 'Number') {
 		return {
 			PT: next,
 			remainingTokens: tokens.slice(1),
@@ -38,7 +18,7 @@ const parseFactor = tokens => {
 	}
 
 	// Factor -> (Expression)
-	if (next && next.type === 'LParen') {
+	if (next.type === 'LParen') {
 		// eslint-disable-next-line no-use-before-define
 		const expressionResult = parseExpression(tokens.slice(1)) // skip LParen
 		return {
@@ -51,16 +31,18 @@ const parseFactor = tokens => {
 	}
 
 	// Factor -> Sign Factor
-	const signResult = parseSign(tokens)
-	const factorResult = parseFactor(signResult.remainingTokens)
-	return {
-		PT: {
-			type: 'Factor',
-			sign: signResult.PT,
-			child: factorResult.PT,
-		},
-		remainingTokens: factorResult.remainingTokens,
+	if (next.type === 'Minus') {
+		const factorResult = parseFactor(tokens.slice(1))
+		return {
+			PT: {
+				type: 'Negation',
+				child: factorResult.PT,
+			},
+			remainingTokens: factorResult.remainingTokens,
+		}
 	}
+
+	throw Error(`Parse error, unexpected token: ${next}`)
 }
 
 // parseB :: [Token] -> { PT: ParseTree, remainingTokens: [Token] }
