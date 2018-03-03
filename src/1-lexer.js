@@ -1,5 +1,6 @@
 'use strict'; // eslint-disable-line semi
 
+// regular expressions which may be helpful
 const matchers = [
 	{ type: 'Number', regex: /^\d+/ },
 	{ type: 'LParen', regex: /^\(/  },
@@ -19,37 +20,6 @@ const lex = inputStr => {
 
 	// Your job: implement this function
 
-	if (!inputStr) {
-		return []
-	}
-
-	const match = matchers.reduce(
-		(foundMatch, matcher) => {
-			if (foundMatch) return foundMatch
-			const possibleMatch = matcher.regex.exec(inputStr)
-			return possibleMatch && {
-				type: matcher.type,
-				value: possibleMatch[0],
-			}
-		},
-		null
-	)
-
-	if (!match) {
-		throw Error(`Parse error at: ${inputStr}`)
-	}
-
-	if (match.type === 'Space') {
-		return lex(inputStr.slice(1))
-	}
-
-	const token = (match.type === 'Number')
-		? { type: 'Number', value: match.value }
-		: { type: match.type }
-
-	const remainingString = inputStr.slice(match.value.length)
-
-	return [token, ...lex(remainingString)]
 }
 
 // This makes `lex` available to other JS files in Node

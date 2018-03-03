@@ -9,20 +9,17 @@
 	"scripts": {
 		"test": "mocha src/*.spec.js",
 		"test-watch": "npm run test -- --watch",
-		"prepush": "npm test",
-		"lint": "esw --ext .js,.jsx --ignore-path .gitignore --cache --format node_modules/eslint-formatter-pretty",
-		"lint-watch": "npm run lint -- --watch",
-		"start": "node src",
-		"dev": "echo \"Please add a dev script\""
+		"lint": "eslint src --ignore-path .gitignore --cache --format node_modules/eslint-formatter-pretty",
+		"start": "node src"
 	},
 	"author": "Gabriel Lebec <glebec@gmail.com> (https://github.com/glebec)",
 	"license": "MIT",
-	"homepage": "https://github.com/glebec/functional-math-compiler#readme",
+	"homepage": "https://github.com/FullstackAcademy/compilers#readme",
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/glebec/functional-math-compiler"
+		"url": "https://github.com/FullstackAcademy/compilers"
 	},
-	"bugs": "https://github.com/glebec/functional-math-compiler/issues",
+	"bugs": "https://github.com/FullstackAcademy/compilers/issues",
 	"dependencies": {},
 	"devDependencies": {
 		"babel-eslint": "^7.2.3",
@@ -31,8 +28,6 @@
 		"eslint-config-fullstack": "^3.0.0",
 		"eslint-formatter-pretty": "^1.1.0",
 		"eslint-plugin-react": "^7.0.1",
-		"eslint-watch": "^3.1.0",
-		"husky": "^0.13.4",
 		"mocha": "^4.1.0"
 	}
 }

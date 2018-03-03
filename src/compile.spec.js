@@ -6,7 +6,7 @@ const compile = require('./compile')
 
 describe('`compile`', () => {
 
-	it('can convert infx to postfix', () => {
+	xit('can convert infx to postfix', () => {
 
 		const infix = '-9 * 2 / -(3 + 7) + ((-4 * 1/2) - -21)'
 		const postfix = compile(infix)

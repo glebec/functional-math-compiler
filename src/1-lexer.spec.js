@@ -20,28 +20,28 @@ describe('lexer `lex`', () => {
 
 	describe('basics:', () => {
 
-		it(`converts '' to an array of no tokens`, () => {
+		xit(`converts '' to an array of no tokens`, () => {
 			expect(lex('')).to.be.empty
 		})
 
-		it(`converts '5' to an array of one Number token`, () => {
+		xit(`converts '5' to an array of one Number token`, () => {
 			const tokens = lex('5')
 			expect(tokens).to.have.length(1)
 			expect(tokens[0]).to.be.an('object')
 				.with.property('type', 'Number')
 		})
 
-		it(`converts '452' to an array of one Number token`, () => {
+		xit(`converts '452' to an array of one Number token`, () => {
 			const tokens = lex('452')
 			// from now on we will use this helper function
 			verify(tokens).areTokensWithTypes(['Number'])
 		})
 
-		it(`converts '+' to an array of one Plus token`, () => {
+		xit(`converts '+' to an array of one Plus token`, () => {
 			verify(lex('+')).areTokensWithTypes(['Plus'])
 		})
 
-		it(`converts '1+2' to an array of three tokens`, () => {
+		xit(`converts '1+2' to an array of three tokens`, () => {
 			verify(lex('1+2')).areTokensWithTypes([
 				'Number',
 				'Plus',
@@ -49,7 +49,7 @@ describe('lexer `lex`', () => {
 			])
 		})
 
-		it(`converts '45+1293' to an array of three tokens`, () => {
+		xit(`converts '45+1293' to an array of three tokens`, () => {
 			verify(lex('45+1293')).areTokensWithTypes([
 				'Number',
 				'Plus',
@@ -57,7 +57,7 @@ describe('lexer `lex`', () => {
 			])
 		})
 
-		it(`converts '  45+  1293 ', ignoring whitespace`, () => {
+		xit(`converts '  45+  1293 ', ignoring whitespace`, () => {
 			verify(lex('  45+  1293 ')).areTokensWithTypes([
 				'Number',
 				'Plus',
@@ -69,14 +69,14 @@ describe('lexer `lex`', () => {
 
 	describe('numbers:', () => {
 
-		it(`converts '426' to a Number token with value '426'`, () => {
+		xit(`converts '426' to a Number token with value '426'`, () => {
 			const token = lex('426')[0]
 			expect(token).to.be.an('object')
 			expect(token).to.have.property('type', 'Number')
 			expect(token).to.have.property('value', '426')
 		})
 
-		it(`converts '32 + 8 + 101', including values for Numbers`, () => {
+		xit(`converts '32 + 8 + 101', including values for Numbers`, () => {
 			const tokens = lex('32 + 8 + 101')
 			verify(tokens).areTokensWithTypes([
 				'Number',
@@ -105,7 +105,7 @@ describe('lexer `lex`', () => {
 		]
 
 		examples.forEach(example => {
-			it(`converts ${example.input} to an array of one ${example.type} token`, () => {
+			xit(`converts ${example.input} to an array of one ${example.type} token`, () => {
 				verify(lex(example.input)).areTokensWithTypes([example.type])
 			})
 		})
@@ -114,7 +114,7 @@ describe('lexer `lex`', () => {
 
 	describe('long inputs:', () => {
 
-		it(`converts '2 - 1/2'`, () => {
+		xit(`converts '2 - 1/2'`, () => {
 			const tokens = lex('2 - 1/2')
 			verify(tokens).areTokensWithTypes([
 				'Number',
@@ -125,7 +125,7 @@ describe('lexer `lex`', () => {
 			])
 		})
 
-		it(`converts '(7 * 91) + -8'`, () => {
+		xit(`converts '(7 * 91) + -8'`, () => {
 			const tokens = lex('(7 * 91) + -8')
 			verify(tokens).areTokensWithTypes([
 				'LParen',
@@ -139,7 +139,7 @@ describe('lexer `lex`', () => {
 			])
 		})
 
-		it(`converts '-5 * -(1  + 2)/ 3 '`, () => {
+		xit(`converts '-5 * -(1  + 2)/ 3 '`, () => {
 			const tokens = lex('-5 * -(1  + 2)/ 3 ')
 			verify(tokens).areTokensWithTypes([
 				'Minus',
@@ -156,7 +156,7 @@ describe('lexer `lex`', () => {
 			])
 		})
 
-		it('throws an error on invalid input', () => {
+		xit('throws an error on invalid input', () => {
 			const lexBad = () => lex('1 + ,2')
 			expect(lexBad).to.throw()
 		})
