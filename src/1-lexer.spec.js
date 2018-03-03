@@ -6,16 +6,17 @@ const { expect } = chai
 
 const { lex } = require('./1-lexer')
 
-describe.only('`lex`', () => {
+// helper function
+const verify = tokens => ({
+	areTokensWithTypes (types) {
+		expect(tokens).to.have.length(types.length)
+		tokens.forEach((token, idx) => {
+			expect(token).to.be.an('object').with.property('type', types[idx])
+		})
+	},
+})
 
-	const verify = tokens => ({
-		areTokensWithTypes (types) {
-			expect(tokens).to.have.length(types.length)
-			tokens.forEach((token, idx) => {
-				expect(token).to.be.an('object').with.property('type', types[idx])
-			})
-		},
-	})
+describe('`lex`', () => {
 
 	// you get this one for free :-)
 	it('is a function', () => {
@@ -168,3 +169,7 @@ describe.only('`lex`', () => {
 	})
 
 })
+
+module.exports = {
+	verify,
+}

@@ -13,7 +13,7 @@ const parseFactor = tokens => {
 	if (next.type === 'Number') {
 		return {
 			PT: {
-				type: 'NumberF',
+				type: 'NumericF',
 				childNumber: next.value,
 			},
 			remainingTokens: tokens.slice(1),
@@ -38,7 +38,7 @@ const parseFactor = tokens => {
 		const factorResult = parseFactor(tokens.slice(1))
 		return {
 			PT: {
-				type: 'NegationF',
+				type: 'NegativeF',
 				childFactor: factorResult.PT,
 			},
 			remainingTokens: factorResult.remainingTokens,
