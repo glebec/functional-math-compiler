@@ -3,7 +3,7 @@ const { inspect } = require('util')
 const stringify = val => inspect(val, false, null, true)
 
 // evaluate :: ParseTree | Token -> Number
-const evaluate = node => { // eslint-disable-line complexity
+const evaluate = node => {
 	switch (node.type) {
 		// convert string to JS float
 		case 'Number': return +node.value
@@ -35,7 +35,7 @@ const evaluate = node => { // eslint-disable-line complexity
 }
 
 // rpn :: ParseTree | Token -> String
-const rpn = node => { // eslint-disable-line complexity
+const rpn = node => {
 	switch (node.type) {
 		// number is already a string
 		case 'Number': return node.value
@@ -67,7 +67,7 @@ const rpn = node => { // eslint-disable-line complexity
 }
 
 // original :: ParseTree | Token -> String
-const original = node => { // eslint-disable-line complexity
+const original = node => {
 	switch (node.type) {
 		// number is already a string
 		case 'Number': return node.value
