@@ -14,7 +14,7 @@ const parseFactor = tokens => {
 		return {
 			PT: {
 				type: 'NumberF',
-				childNumber: next,
+				childNumberToken: next,
 			},
 			remainingTokens: tokens.slice(1),
 		}
