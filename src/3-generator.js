@@ -1,6 +1,6 @@
 'use strict'; // eslint-disable-line semi
 const { inspect } = require('util')
-const stringify = val => inspect(val, false, null, true)
+const prettyString = val => inspect(val, false, null, true)
 
 // evaluate :: ParseTree | Token -> Number
 const evaluate = node => {
@@ -31,7 +31,7 @@ const evaluate = node => {
 		default: break
 	}
 	// if we didn't handle a given case, something has gone wrong
-	throw Error(`Compilation error, unexpected node: ${stringify(node)}`)
+	throw Error(`Compilation error, unexpected node: ${prettyString(node)}`)
 }
 
 // rpn :: ParseTree | Token -> String
@@ -63,7 +63,7 @@ const rpn = node => {
 		default: break
 	}
 	// if we didn't handle a given case, something has gone wrong
-	throw Error(`Compilation error, unexpected node: ${stringify(node)}`)
+	throw Error(`Compilation error, unexpected node: ${prettyString(node)}`)
 }
 
 // original :: ParseTree | Token -> String
@@ -95,7 +95,7 @@ const original = node => {
 		default: break
 	}
 	// if we didn't handle a given case, something has gone wrong
-	throw Error(`Compilation error, unexpected node: ${stringify(node)}`)
+	throw Error(`Compilation error, unexpected node: ${prettyString(node)}`)
 }
 
 module.exports = {
