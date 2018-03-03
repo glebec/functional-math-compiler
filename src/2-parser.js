@@ -23,7 +23,7 @@ const parseFactor = tokens => {
 		const expressionResult = parseExpression(tokens.slice(1)) // skip LParen
 		return {
 			PT: {
-				type: 'Group',
+				type: 'GroupF',
 				childExpression: expressionResult.PT,
 			},
 			remainingTokens: expressionResult.remainingTokens.slice(1), // skip Rparen
@@ -35,7 +35,7 @@ const parseFactor = tokens => {
 		const factorResult = parseFactor(tokens.slice(1))
 		return {
 			PT: {
-				type: 'Negation',
+				type: 'NegationF',
 				childFactor: factorResult.PT,
 			},
 			remainingTokens: factorResult.remainingTokens,
@@ -55,19 +55,17 @@ const parseF2 = tokens => {
 	const isSlash = next && next.type === 'Slash'
 	if (!isStar && !isSlash) {
 		return {
-			PT: { type: 'EpsilonF' },
+			PT: { type: 'EpsilonF2' },
 			remainingTokens: tokens,
 		}
 	}
 
 	// F2 -> * Factor F2 | / Factor F2
-	const op = next
 	const factorResult = parseFactor(tokens.slice(1))
 	const f2Result = parseF2(factorResult.remainingTokens)
 	return {
 		PT: {
-			type: 'F2',
-			op: op,
+			type: isStar ? 'MultiplicativeF2' : 'DivisionalF2',
 			childFactor: factorResult.PT,
 			childF2: f2Result.PT,
 		},
@@ -100,19 +98,17 @@ const parseT2 = tokens => {
 	const isSub = next && next.type === 'Minus'
 	if (!isAdd && !isSub) {
 		return {
-			PT: { type: 'EpsilonT' },
+			PT: { type: 'EpsilonT2' },
 			remainingTokens: tokens,
 		}
 	}
 
 	// T2 -> + Term T2 | - Term T2
-	const op = next
 	const termResult = parseTerm(tokens.slice(1))
 	const t2Result = parseT2(termResult.remainingTokens)
 	return {
 		PT: {
-			type: 'T2',
-			op: op,
+			type: isAdd ? 'AdditiveT2' : 'SubtractiveT2',
 			childTerm: termResult.PT,
 			childT2: t2Result.PT,
 		},
