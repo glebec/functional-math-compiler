@@ -22,7 +22,7 @@ const verifyResultShape = result => {
 	expect(result.remainingTokens).to.be.an('array')
 }
 
-describe.only('parser', () => {
+describe('parser', () => {
 
 	describe('helpers', () => {
 
@@ -1317,87 +1317,82 @@ describe.only('parser', () => {
 
 	describe('`parse`', () => {
 
-		it('builds a parse tree for an expression from an array of input tokens', () => {
+		it('returns a parse tree for an expression from an array of input tokens', () => {
 			const tokens = lex('-3 / (4 - 2 * 2) + 1')
 			const tree = parse(tokens)
 			expect(tree).to.deep.equal({
 				type: 'Expression',
-
-
-
-				"childT2": {
-					  "childT2": {
-					    "type": "EpsilonT2"
-					  },
-					  "childTerm": {
-					    "childF2": {
-					      "type": "EpsilonF2"
-					    },
-					    "childFactor": {
-					      "childNumber": "1",
-					      "type": "NumericF"
-					    },
-					    "type": "Term"
-					  },
-					  "type": "AdditiveT2"
+				childTerm: {
+					type: 'Term',
+					childFactor: {
+						type: 'NegativeF',
+						childFactor: {
+							type: 'NumericF',
+							childNumber: '3',
+						},
 					},
-					"childTerm": {
-					  "childF2": {
-					    "childF2": {
-					      "type": "EpsilonF2"
-					    },
-					    "childFactor": {
-					      "childExpression": {
-					        "childT2": {
-					          "childT2": {
-					            "type": "EpsilonT2"
-					          },
-					          "childTerm": {
-					            "childF2": {
-					              "childF2": {
-					                "type": "EpsilonF2"
-					              },
-					              "childFactor": {
-					                "childNumber": "2",
-					                "type": "NumericF"
-					              },
-					              "type": "MultiplicativeF2"
-					            },
-					            "childFactor": {
-					              "childNumber": "2",
-					              "type": "NumericF"
-					            },
-					            "type": "Term"
-					          },
-					          "type": "SubtractiveT2"
-					        },
-					        "childTerm": {
-					          "childF2": {
-					            "type": "EpsilonF2"
-					          },
-					          "childFactor": {
-					            "childNumber": "4",
-					            "type": "NumericF"
-					          },
-					          "type": "Term"
-					        },
-					        "type": "Expression"
-					      },
-					      "type": "GroupF"
-					    },
-					    "type": "DivisionalF2"
-					  },
-					  "childFactor": {
-					    "childFactor": {
-					      "childNumber": "3",
-					      "type": "NumericF"
-					    },
-					    "type": "NegativeF"
-					  },
-					  "type": "Term"
-					}
-
-
+					childF2: {
+						type: 'DivisionalF2',
+						childFactor: {
+							type: 'GroupF',
+							childExpression: {
+								type: 'Expression',
+								childTerm: {
+									type: 'Term',
+									childFactor: {
+										type: 'NumericF',
+										childNumber: '4',
+									},
+									childF2: {
+										type: 'EpsilonF2',
+									},
+								},
+								childT2: {
+									type: 'SubtractiveT2',
+									childTerm: {
+										type: 'Term',
+										childFactor: {
+											type: 'NumericF',
+											childNumber: '2',
+										},
+										childF2: {
+											type: 'MultiplicativeF2',
+											childFactor: {
+												type: 'NumericF',
+												childNumber: '2',
+											},
+											childF2: {
+												type: 'EpsilonF2',
+											},
+										},
+									},
+									childT2: {
+										type: 'EpsilonT2',
+									},
+								},
+							},
+						},
+						childF2: {
+							type: 'EpsilonF2',
+						},
+					},
+				},
+				childT2: {
+					type: 'AdditiveT2',
+					childTerm: {
+						type: 'Term',
+						childFactor: {
+							type: 'NumericF',
+							childNumber: '1',
+						},
+						childF2: {
+							type: 'EpsilonF2',
+						},
+					},
+					childT2: {
+						type: 'EpsilonT2',
+					},
+				},
 			})
 		})
 
