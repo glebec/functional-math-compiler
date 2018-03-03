@@ -18,11 +18,6 @@ const verify = tokens => ({
 
 describe('`lex`', () => {
 
-	// you get this one for free :-)
-	it('is a function', () => {
-		expect(lex).to.be.a('function')
-	})
-
 	describe('basics:', () => {
 
 		it(`converts '' to an array of no tokens`, () => {
