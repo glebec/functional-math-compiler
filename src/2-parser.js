@@ -12,7 +12,10 @@ const parseFactor = tokens => {
 	// Factor -> Number
 	if (next.type === 'Number') {
 		return {
-			PT: next,
+			PT: {
+				type: 'NumberF',
+				childNumber: next,
+			},
 			remainingTokens: tokens.slice(1),
 		}
 	}
