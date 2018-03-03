@@ -5,7 +5,7 @@ const prettyString = val => inspect(val, false, null, true)
 // original :: ParseTree | Token -> String
 const original = node => {
 	switch (node.type) {
-		case 'NumberF':          return node.childNumberToken.value
+		case 'NumberF':          return node.childNumber
 		case 'NegationF':        return '-' + original(node.childFactor)
 		case 'GroupF':           return '(' +  original(node.childExpression) + ')'
 		case 'MultiplicativeF2': return ' * ' + original(node.childFactor) + original(node.childF2)
@@ -25,7 +25,7 @@ const original = node => {
 // evaluate :: ParseTree | Token -> Number
 const evaluate = node => {
 	switch (node.type) {
-		case 'NumberF':          return +node.childNumberToken.value
+		case 'NumberF':          return +node.childNumber
 		case 'NegationF':        return -1 * evaluate(node.childFactor)
 		case 'GroupF':           return evaluate(node.childExpression)
 		case 'MultiplicativeF2': return evaluate(node.childFactor) * evaluate(node.childF2)
@@ -45,7 +45,7 @@ const evaluate = node => {
 // rpn :: ParseTree | Token -> String
 const rpn = node => {
 	switch (node.type) {
-		case 'NumberF':          return node.childNumberToken.value
+		case 'NumberF':          return node.childNumber
 		case 'NegationF':        return rpn(node.childFactor) + ' -1 *'
 		case 'GroupF':           return rpn(node.childExpression)
 		case 'MultiplicativeF2': return ' ' + rpn(node.childFactor) + ' *' + rpn(node.childF2)
