@@ -1,25 +1,37 @@
-# Functional JS Arithmetic Expression Compiler
+# JS Arithmetic Expression Compiler
 
-Compiler exercise for education. Parsing infix arithmetic expressions via LL(1) recursive descent, adhering to functional approaches.
+Compiler exercise for education. Parsing infix arithmetic expressions via LL(1) recursive descent through a Concrete Syntax Tree (CST) with one node type per production rule.
 
 ## Features
 
-* Pure functions only: no side effects (apart from STDOUT), no mutations, all `const` etc.
-* Uses `daggy` for tagged unions (aka sum types)
-	* Enables type checking e.g. `Token.Number.is(x)` and `Token.is(x)`
-	* Enables simple pattern matching / catamorphisms e.g. `someToken.cata({ Mul: () => true, Div: () => false })` with automatic errors in case of match failure
-* Uses Immutable.js List for functional collections
-	* Enables efficient `unshift`, `push`, and `slice`
-	* Immutability provides strong reasoning benefits
+* Possible to solve using pure functions only: no side effects, no mutations, all `const` etc.
+* One node type per production rule (allows for zero `if` statements or ternaries in generator code, only control flow via `switch`)
+* Extensive test suite
 
 ## Use
 
 ```sh
-yarn # installs
-yarn test # passes
-yarn start '-9 * 2 / -(3 + 7) + ((-4 * 1/2) - -21)' # outputs RPN string
-yarn start '-9 * 2 / -(3 + 7) + ((-4 * 1/2) - -21)' --eval # outputs num
+npm # installs
+npm test # passes
+npm start '-9 * 2 / -(3 + 7) + ((-4 * 1/2) - -21)' # outputs RPN string
+npm start '-9 * 2 / -(3 + 7) + ((-4 * 1/2) - -21)' --eval # outputs num
 ```
+
+## Exercise
+
+```sh
+npm run test-watch # start the tests in watch mode
+```
+
+Implement the specs found in the `src` folder in order:
+
+1. Lexer
+2. Parser
+3. Generator
+
+The `compiler.spec.js` will then pass.
+
+**Refer to the lecture notes and LearnDot guide / hints**. This exercise will be very opaque without the extra help!
 
 ### Supports
 
@@ -35,37 +47,46 @@ yarn start '-9 * 2 / -(3 + 7) + ((-4 * 1/2) - -21)' --eval # outputs num
 
 ### Lexer
 
-Converts raw input string to an Immutable.js List of Daggy types (tokens):
+Converts raw input string to an array of Plain Old JavaScript Objects (POJOs) representing lexemes, aka tokens:
 
 * Number (string of digits)
 * Lparen
 * Rparen
-* Mul
-* Div
-* Add
-* Sub
+* Star
+* Slash
+* Plus
+* Minus
 
 ### Parser
 
-Converts list of tokens to a parse tree, aka concrete syntax tree:
+Converts array of tokens to a parse tree, aka concrete syntax tree. Organized by nonterminal category:
 
-* Epsilon
-* Factor (sign, child)
-* F2 (op, factor, childF2)
-* T2 (op, term, childT2)
-* Term (factor, childF2)
-* Expression (term, childT2)
+* Expression (childTerm, childT2)
+* Term (childFactor, childF2)
+* T2 rules
+  * EpsilonT2
+  * AdditiveT2 (childTerm, childT2)
+  * SubtractiveT2 (childTerm, childT2)
+* Factor rules
+  * NumericF (childNumber)
+  * NegativeF (childFactor)
+  * GroupF (childExpression)
+* F2 rules
+  * EpsilonF2
+  * MultiplicativeF2 (childFactor, childF2)
+  * DivisionalF2 (childFactor, childF2)
 
-Note that a CST / PT preserves all or almost all of the syntax as represented by the language's grammar, whereas an Abstract Syntax Tree (AST) reduces the information to the bare minimum necessary for a given use case. Currently our CST simplifies parenthetical expressions, though we could make it preserve parens.
+Note that a CST / PT preserves all or almost all of the syntax as represented by the language's grammar, whereas an Abstract Syntax Tree (AST) reduces the information to the bare minimum necessary for a given use case. Our CST features one node type per _production rule_ rather than for per _nonterminal_, which increases the number of node types but simplifies the generator code.
 
 ### Generator
 
-Dispatches based on node type to recursively process the parse tree. Two generators included:
+Dispatches based on node type to recursively process the parse tree. Several generators spec'd:
 
-* an infix -> RPN compiler
+* one which re-generates the input string
 * a numerical evaluator
+* an infix -> RPN compiler
 
-The latter generator can be chosen from the command line by appending the `--eval` flag.
+The compiler is active by default. The evaluator can be chosen from the command line by appending the `--eval` flag.
 
 ## Grammar
 
@@ -102,7 +123,9 @@ F  -> (E)
 F  -> number
 ```
 
-A formal EBNF notation of a similar grammar is included in the `docs` folder, with the augmentation that we allow for multiplication, subtraction, and negative factors.
+A formal EBNF notation of a similar grammar is included in the `docs` folder, with the augmentation that we allow for division, subtraction, and negative factors.
+
+It is possible to code the parse tree using nonterminals and terminals in the above grammar as node types. However, that necessitates that a given node type (e.g. F) might be polymorphic (have more than one shape). An alternative, which works in any language, is to have a separate node type per production rule (arrow) as discussed earlier.
 
 ## Resources
 

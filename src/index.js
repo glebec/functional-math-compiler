@@ -4,7 +4,7 @@ const { lex } = require('./1-lexer')
 const { parse } = require('./2-parser')
 const { evaluate, rpn } = require('./3-generator')
 
-// impurity! External input! Oh what a world…
+// checking command flags for backend choice
 const inputStr = process.argv[2]
 const evalFlag = process.argv[3] === '--eval'
 
@@ -20,7 +20,7 @@ const backEnd = evalFlag ? evaluate : rpn
 // compile :: String -> String (rpn) | Number (eval)
 const compile = pipe(frontEnd, backEnd)
 
-// SIDE EFFECTS! OH THE HORROR
+// the only side effect in all of the solution code
 const main = pipe(compile, console.log.bind(console))
 
 // here we go…

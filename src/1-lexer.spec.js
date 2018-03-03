@@ -16,7 +16,7 @@ const verify = tokens => ({
 	},
 })
 
-describe('`lex`', () => {
+describe('lexer `lex`', () => {
 
 	describe('basics:', () => {
 
